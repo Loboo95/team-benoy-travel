@@ -277,7 +277,7 @@ function UserForm({person,users,save,close}){
 function TextForm({label,initial='',save,close,button='Сохранить',password=false}){
   const [v,V]=useState(initial);
   return <form onSubmit={e=>{e.preventDefault();if(v.trim())save(v.trim())}}>
-    <Field label={label}>{password?<input required minLength="8" type="password" className="input" value={v} onChange={e=>V(e.target.value)}/>:<textarea autoFocus required maxLength={8000} className="input" value={v} onChange={e=>V(e.target.value)}/>}</Field>
+    <Field label={label}>{password?<input required minLength="6" type="password" className="input" value={v} onChange={e=>V(e.target.value)}/>:<textarea autoFocus required maxLength={8000} className="input" value={v} onChange={e=>V(e.target.value)}/>}</Field>
     <div className="modalfoot"><Btn onClick={close}>Отмена</Btn><button className="btn primary" type="submit">{button}</button></div>
   </form>
 }
@@ -366,7 +366,7 @@ function App(){
   const allowedTasks=db.tasks.filter(t=>manager||t.assignee===user?.name);
   const base=allowedTasks.filter(t=>(scope!=='mine'||t.assignee===user?.name)&&(!cat||(cat==='__unassigned'?!t.category:t.category===cat)));
   
-  // Точная фильтрация без задвоения просроченных задач
+  // Точная фильтрация 5 категорий без задвоения
   const filtered=base.filter(t=>{
     if(filter==='all') return true;
     if(filter==='active') return !overdue(t) && ['К выполнению','В работе'].includes(t.status);
@@ -400,7 +400,7 @@ function App(){
     </article>;
   }
 
-  // 5 кристально понятных карточек: Всего, В работе, На утверждении, Просрочено, Выполнено
+  // 5 понятных карточек
   const stats=(list)=>{
     let n=list.length;
     let done=list.filter(t=>t.status==='Выполнена').length;
@@ -556,7 +556,7 @@ function App(){
       {/* Вкладка 5: Управление командой (для lobo / SuperAdmin) */}
       {tab==='team'&&admin&&<>
         <div className="between pagehead">
-          <div><p className="eyebrow">Администрирование</p><h1>Управление командой</h1><p className="subtitle">Профили команды и привязка аккаунтов Supabase Auth.</p></div>
+          <div><p className="eyebrow">Администрирование</p><h1>Управление командой</h1><p className="subtitle">Профили сотрудников, привязка Auth UID и быстрая смена паролей.</p></div>
           <Btn kind="primary" icon="user-plus" onClick={()=>Q({type:'person'})}>Добавить</Btn>
         </div>
         <div className="glass tablewrap">
@@ -568,7 +568,13 @@ function App(){
                 <td>{u.login}</td>
                 <td>{u.role==='employee'?'Сотрудник':u.login==='lobo'?'SuperAdmin':'Руководство'}</td>
                 <td><span className={'chip '+(u.is_active?'emerald':'coral')}>{u.is_active?'Активен':'Отключён'}</span></td>
-                <td><Btn icon="pencil" onClick={()=>Q({type:'person',person:u})}>Изменить</Btn></td>
+                <td>
+                  <div className="row">
+                    <Btn icon="pencil" onClick={()=>Q({type:'person',person:u})}>Изменить</Btn>
+                    {/* Кнопка мгновенной смены пароля сотруднику */}
+                    {u.login!=='lobo'&&<Btn icon="key-round" onClick={()=>Q({type:'resetEmployeePass',person:u})}>Пароль</Btn>}
+                  </div>
+                </td>
               </tr>)}
             </tbody>
           </table>
@@ -604,6 +610,7 @@ function App(){
       password:'Сменить пароль',
       system:'Система и состояние базы данных',
       person:modal.person?'Изменить пользователя':'Добавить пользователя',
+      resetEmployeePass:modal.person?'Смена пароля сотрудника':'Смена пароля',
       connection:'Подключение рабочей базы'
     }[modal.type]} close={close}>
       {modal.type==='task'&&manager&&<TaskForm task={modal.task} idea={modal.idea} users={db.users} close={close} save={saveTask}/>}
@@ -614,14 +621,33 @@ function App(){
       {modal.type==='note'&&<TextForm label="Личная заметка" initial={modal.note?.text||''} close={close} save={text=>{commit(d=>({...d,notes:modal.note?d.notes.map(n=>n.id===modal.note.id&&n.user_login===user.login?{...n,text,updated_at:iso()}:n):[{id:uid(),user_login:user.login,text,updated_at:iso()},...d.notes]}));close();notify('Заметка сохранена');}}/>}
       {modal.type==='system'&&admin&&<SystemOverviewView close={close}/>}
       {modal.type==='person'&&admin&&<UserForm person={modal.person} users={db.users} close={close} save={p=>{commit(d=>({...d,users:modal.person?d.users.map(u=>u.id===modal.person.id?{...u,...p}:u):[...d.users,{...p,id:uid()}],tasks:d.tasks,goals:d.goals}));close();notify('Профиль обновлён');}}/>}
+      
+      {/* Модальное окно быстрой смены пароля сотрудника администратором */}
+      {modal.type==='resetEmployeePass'&&admin&&<TextForm
+        label={'Новый пароль для ' + modal.person.name + ' (логин: ' + modal.person.login + ')'}
+        password
+        close={close}
+        button="Сохранить новый пароль"
+        save={async newPass=>{
+          try{
+            const {error}=await sb.rpc('benoy_admin_reset_password',{p_user_login:modal.person.login,p_new_password:newPass});
+            if(error) throw error;
+            close();
+            notify('Пароль для ' + modal.person.name + ' успешно изменён');
+          }catch(err){
+            notify(err.message||'Не удалось изменить пароль');
+          }
+        }}
+      />}
+
       {modal.type==='profile'&&<div className="stack">
         <div className="row"><span className="avatar" style={{width:50,height:50,fontSize:18}}>{initials(user.name)}</span><div><h3>{user.name}</h3><p className="muted">{user.login} · {admin?'SuperAdmin':manager?'Руководство':'Сотрудник'}</p></div></div>
         {admin&&<Btn icon="users" onClick={()=>{switchTab('team');close();}}>Управление командой</Btn>}
         {admin&&<Btn icon="server" kind="primary" onClick={()=>Q({type:'system'})}>Состояние системы и БД</Btn>}
-        <Btn icon="key-round" onClick={()=>Q({type:'password'})}>Сменить пароль</Btn>
+        <Btn icon="key-round" onClick={()=>Q({type:'password'})}>Сменить свой пароль</Btn>
         <Btn kind="danger" icon="log-out" onClick={async()=>{await sb.auth.signOut();D(blankDB());L(null);close();}}>Выйти</Btn>
       </div>}
-      {modal.type==='password'&&<TextForm label="Новый пароль" password close={close} save={async p=>{const {error}=await sb.auth.updateUser({password:p});if(error){notify(connectionError(error));return;}close();notify('Пароль изменён');}}/>}
+      {modal.type==='password'&&<TextForm label="Новый личный пароль" password close={close} save={async p=>{const {error}=await sb.auth.updateUser({password:p});if(error){notify(connectionError(error));return;}close();notify('Пароль изменён');}}/>}
       {modal.type==='connection'&&<Connection/>}
     </Modal>}
     {toast&&<div className="toast" role="status">{toast}</div>}
