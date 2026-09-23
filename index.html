@@ -18,7 +18,7 @@
   <script src="./assets/vendor/supabase-2.116.0.js"></script>
 
 <style>
-:root{color-scheme:dark;--bg:#080c14;--glass:rgba(16,24,39,.7);--line:rgba(255,255,255,.08);--muted:#94a3b8;--green:#10b981;--blue:#38bdf8;--red:#f43f5e}
+:root{color-scheme:dark;--bg:#080c14;--glass:rgba(16,24,39,.7);--line:rgba(255,255,255,.08);--muted:#94a3b8;--green:#10b981;--blue:#38bdf8;--violet:#c4b5fd;--red:#f43f5e}
 *{box-sizing:border-box}
 body{margin:0;background:radial-gradient(ellipse at 5% 5%,#103d343b,transparent 45%),radial-gradient(ellipse at 100% 45%,#123b562b,transparent 45%),var(--bg);color:#e9eef6;font:16px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100vh}
 button,input,textarea,select{font:inherit}
@@ -40,9 +40,10 @@ a{color:#67d3ff;text-decoration:none}h1,h2,h3,p{margin:0}h1{font-size:30px;font-
 .shell{max-width:1320px;margin:auto;padding:24px 20px 120px}.eyebrow{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#6fae9e;margin-bottom:6px}.subtitle{color:var(--muted);font-size:14px;margin-top:4px}
 .demo{border:1px solid #f59e0b23;background:#f59e0b08;color:#d5be85;border-radius:10px;padding:9px 13px;font-size:13px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;gap:10px}
 .demo button{color:#e9ce92;background:none;border:0;white-space:nowrap;text-decoration:underline;text-underline-offset:3px}
-.pagehead{margin-bottom:20px}.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:20px 0}
-.stat{text-align:left;padding:18px;border-radius:16px;color:inherit;transition:border-color .2s;background:linear-gradient(120deg,#13232370,#101827b3);border:1px solid var(--line)}
-.stat:hover,.stat.selected{border-color:#10b98170}.stat .value{font-size:30px;line-height:1.2;font-weight:600;letter-spacing:-1px;margin:12px 0 4px}.stat .label{font-size:13px;color:#a5b2c3}.stat small{font-size:12px;color:#8191a7}
+.pagehead{margin-bottom:20px}
+.stats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin:20px 0}
+.stat{text-align:left;padding:16px;border-radius:16px;color:inherit;transition:border-color .2s;background:linear-gradient(120deg,#13232370,#101827b3);border:1px solid var(--line)}
+.stat:hover,.stat.selected{border-color:#10b98170}.stat .value{font-size:28px;line-height:1.2;font-weight:600;letter-spacing:-1px;margin:10px 0 4px}.stat .label{font-size:13px;color:#a5b2c3}.stat small{font-size:11px;color:#8191a7}
 .toolbar{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:18px}
 .segment{display:inline-flex;gap:3px;background:#050a11a0;border:1px solid var(--line);padding:4px;border-radius:12px}
 .segment button{border:0;background:transparent;color:#8c9aaf;padding:8px 14px;border-radius:8px;font-size:13px;display:flex;align-items:center;justify-content:center;gap:7px;min-height:38px}
@@ -75,10 +76,10 @@ a{color:#67d3ff;text-decoration:none}h1,h2,h3,p{margin:0}h1{font-size:30px;font-
 .pilldot{width:6px;height:6px;border-radius:50%;background:currentColor}.counttitle{font-size:13px;color:#73889d;font-weight:400;margin-left:8px}.sectiontitle{margin:22px 0 14px}
 .notification{margin-top:10px;padding:10px;border-left:2px solid #f59e0b;background:#f59e0b08;font-size:13px;color:#d6c18d}
 .warnbox{margin-top:10px;padding:10px;border-left:2px solid #f43f5e;background:#f43f5e10;font-size:12px;color:#fda4af;border-radius:0 8px 8px 0}
-@media(max-width:1000px){.taskgrid{grid-template-columns:repeat(2,minmax(0,1fr))}.charts{grid-template-columns:1fr 1fr}.chartbox:first-child{grid-column:1/-1}}
+@media(max-width:1100px){.stats{grid-template-columns:repeat(3,minmax(0,1fr))}.taskgrid{grid-template-columns:repeat(2,minmax(0,1fr))}.charts{grid-template-columns:1fr 1fr}.chartbox:first-child{grid-column:1/-1}}
 @media(max-width:640px){
   .shell{padding:16px 12px 115px}.topbar{padding:12px 14px}.topbar .desktop{display:none}h1{font-size:24px}
-  .stats{gap:8px;grid-template-columns:repeat(2,minmax(0,1fr));margin:16px 0}.stat{padding:14px}.stat .value{font-size:26px}
+  .stats{gap:8px;grid-template-columns:repeat(2,minmax(0,1fr));margin:16px 0}.stat{padding:12px}.stat .value{font-size:24px}
   .taskgrid,.goalgrid,.ideagrid,.charts{grid-template-columns:1fr}
   .bottomnav{bottom:0;width:100%;border-radius:16px 16px 0 0;justify-content:space-around;padding:6px 4px calc(6px + env(safe-area-inset-bottom));gap:0}
   .bottomnav button{flex:1;flex-direction:column;gap:4px;padding:8px 2px;font-size:11px}
@@ -307,7 +308,7 @@ function SystemOverviewView({close}){
     load();
   },[]);
   if(loading)return <div className="stack" style={{padding:20}}><Icon name="loader" size={24}/><p className="muted">Связываемся с сервером базы данных…</p></div>;
-  if(err)return <div className="stack"><p className="error">{err}</p><p className="muted">Убедитесь, что миграция superadmin-system-overview.sql выполнена в Supabase.</p></div>;
+  if(err)return <div className="stack"><p className="error">{err}</p><p className="muted">Убедитесь, что проект Supabase активен (Unpause).</p></div>;
   return <div className="stack">
     <div className="row wrap between"><span className="chip emerald"><span className="pilldot"/>База данных: {data.status||'online'}</span><span className="muted mini">Задержка сети: {data.ping} мс</span></div>
     <div className="stats" style={{gridTemplateColumns:'repeat(3,1fr)',margin:'10px 0'}}>
@@ -364,7 +365,16 @@ function App(){
 
   const allowedTasks=db.tasks.filter(t=>manager||t.assignee===user?.name);
   const base=allowedTasks.filter(t=>(scope!=='mine'||t.assignee===user?.name)&&(!cat||(cat==='__unassigned'?!t.category:t.category===cat)));
-  const filtered=base.filter(t=>filter==='all'||filter==='active'&&t.status!=='Выполнена'||filter==='done'&&t.status==='Выполнена'||filter==='late'&&overdue(t));
+  
+  // Точная фильтрация без задвоения просроченных задач
+  const filtered=base.filter(t=>{
+    if(filter==='all') return true;
+    if(filter==='active') return !overdue(t) && ['К выполнению','В работе'].includes(t.status);
+    if(filter==='review') return t.status==='На проверке';
+    if(filter==='late') return overdue(t);
+    if(filter==='done') return t.status==='Выполнена';
+    return true;
+  });
 
   const saveTask=f=>{if(!manager)return;let old=modal?.task;const history=[...(old?.history||[])];if(old&&old.deadline!==f.deadline)history.push(audit(user,'Дедлайн изменён: '+new Date(old.deadline).toLocaleString('ru-RU')+' → '+new Date(f.deadline).toLocaleString('ru-RU')));commit(d=>({...d,tasks:old?d.tasks.map(t=>t.id===old.id?{...t,...f,history}:t):[{...f,id:uid(),status:STATES[0],created_at:iso(),completed_at:null,history:[audit(user,'Задача назначена')],rejection_reason:''},...d.tasks]}));close();notify(old?'Изменения сохранены':'Задача назначена')};
 
@@ -390,11 +400,33 @@ function App(){
     </article>;
   }
 
-  const stats=(list)=>{let n=list.length,d=list.filter(t=>t.status==='Выполнена').length;return [{key:'all',label:'Всего задач',value:n,sub:'В периоде',icon:'layers',color:'#a1b2ca'},{key:'active',label:'Активные',value:n-d,sub:'В работе',icon:'activity',color:'#38bdf8'},{key:'done',label:'Выполнено',value:d,sub:(n?Math.round(d/n*100):0)+'%',icon:'circle-check',color:'#10b981'},{key:'late',label:'Просрочка',value:list.filter(overdue).length,sub:'Внимание',icon:'triangle-alert',color:'#fb7185'}]};
-  const kpis=list=><div className="stats">{stats(list).map(s=><button className={'stat '+(filter===s.key?'selected':'')} key={s.key} onClick={()=>Filter(s.key)}><div className="between"><span className="label">{s.label}</span><span style={{color:s.color}}><Icon name={s.icon}/></span></div><div className="value" style={{color:s.key==='late'&&s.value?'#fb7185':undefined}}>{s.value.toString().padStart(2,'0')}</div><small>{s.sub}</small></button>)}</div>;
+  // 5 кристально понятных карточек: Всего, В работе, На утверждении, Просрочено, Выполнено
+  const stats=(list)=>{
+    let n=list.length;
+    let done=list.filter(t=>t.status==='Выполнена').length;
+    let review=list.filter(t=>t.status==='На проверке').length;
+    let late=list.filter(overdue).length;
+    let active=list.filter(t=>!overdue(t)&&['К выполнению','В работе'].includes(t.status)).length;
+    return [
+      {key:'all',label:'Всего задач',value:n,sub:'В периоде',icon:'layers',color:'#a1b2ca'},
+      {key:'active',label:'В работе',value:active,sub:'По графику',icon:'activity',color:'#38bdf8'},
+      {key:'review',label:'На утверждении',value:review,sub:'Ждут приёмки',icon:'clock',color:'#c4b5fd'},
+      {key:'late',label:'Просрочено',value:late,sub:'Требуют внимания',icon:'triangle-alert',color:'#fb7185'},
+      {key:'done',label:'Выполнено',value:done,sub:(n?Math.round(done/n*100):0)+'%',icon:'circle-check',color:'#10b981'}
+    ];
+  };
+
+  const kpis=list=><div className="stats">{stats(list).map(s=><button className={'stat '+(filter===s.key?'selected':'')} key={s.key} onClick={()=>Filter(s.key)}><div className="between"><span className="label">{s.label}</span><span style={{color:s.color}}><Icon name={s.icon}/></span></div><div className="value" style={{color:s.key==='late'&&s.value?'#fb7185':s.key==='review'&&s.value?'#c4b5fd':undefined}}>{s.value.toString().padStart(2,'0')}</div><small>{s.sub}</small></button>)}</div>;
 
   const reportBase=selectReportTasks(allowedTasks,{year,month,category:cat,status:reportStatus});
-  const reportList=reportBase.filter(t=>filter==='all'||filter==='active'&&t.status!=='Выполнена'||filter==='done'&&t.status==='Выполнена'||filter==='late'&&overdue(t));
+  const reportList=reportBase.filter(t=>{
+    if(filter==='all') return true;
+    if(filter==='active') return !overdue(t) && ['К выполнению','В работе'].includes(t.status);
+    if(filter==='review') return t.status==='На проверке';
+    if(filter==='late') return overdue(t);
+    if(filter==='done') return t.status==='Выполнена';
+    return true;
+  });
 
   function exportCSV(){
     const esc=v=>'"'+String(v??'').replace(/^[=+\-@\t\r]/,"'$&").replaceAll('"','""')+'"';
@@ -438,7 +470,7 @@ function App(){
           <div className="segment"><button className={mode==='list'?'active':''} onClick={()=>M('list')}><Icon name="list" size={16}/>Список</button><button className={mode==='kanban'?'active':''} onClick={()=>M('kanban')}><Icon name="columns-3" size={16}/>Канбан</button></div>
         </div>
         <div className="between wrap" style={{marginBottom:16}}>
-          <h3>{filter==='late'?'Просроченные задачи':filter==='done'?'Выполненные задачи':filter==='active'?'Активные задачи':'Реестр задач'}<span className="counttitle">{filtered.length} из {base.length}</span></h3>
+          <h3>{filter==='review'?'Задачи на утверждении':filter==='late'?'Просроченные задачи':filter==='done'?'Выполненные задачи':filter==='active'?'Задачи в работе':'Реестр задач'}<span className="counttitle">{filtered.length} из {base.length}</span></h3>
           <select aria-label="Направление" className="input" style={{width:'auto',maxWidth:'100%',fontSize:13}} value={cat} onChange={e=>Cat(e.target.value)}>
             <option value="">Все направления</option>
             {CATS.map(c=><option key={c}>{c}</option>)}
