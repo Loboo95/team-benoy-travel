@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#080C14">
-  <meta name="description" content="team Benoy Travel — рабочее пространство команды. Задачи, отчёты, сезонные цели и идеи.">
+  <meta name="description" content="team Benoy Travel — корпоративная система команды. Задачи, отчёты, цели и управление.">
   <title>team Benoy Travel</title>
   <link rel="icon" type="image/png" href="./assets/benoy-travel-logo.png">
 
-  <!-- Локальные библиотеки (относительные пути ./assets/ предотвращают 404 на GitHub Pages) -->
+  <!-- Локальные вендорные библиотеки -->
   <script src="./assets/vendor/telegram-web-app.js"></script>
   <script crossorigin src="./assets/vendor/react-18.3.1.js"></script>
   <script crossorigin src="./assets/vendor/react-dom-18.3.1.js"></script>
@@ -216,7 +216,7 @@ function databasePatch(table,old,next){
 function workspaceChanges(before,after){const changes=[];for(const table of ['users','tasks','goals','ideas','notes']){const old=new Map(before[table].map(r=>[r.id,r]));for(const row of after[table]){const prior=old.get(row.id);const payload=databasePatch(table,prior,row);if(Object.keys(payload).length)changes.push({table,old:prior,payload,action:prior?'update':'insert'});old.delete(row.id);}for(const row of old.values())changes.push({table,old:row,action:'delete'});}return changes;}
 async function saveWorkspace(before,after){const changes=workspaceChanges(before,after);if(!changes.length)return;if(changes.length!==1)throw Error('Сохраните изменения одной записи за раз');const c=changes[0];let query=sb.from(c.table);if(c.action==='insert')query=query.insert(c.payload);else if(c.action==='update')query=query.update(c.payload).eq('id',c.old.id).eq('revision',c.old.revision);else query=query.delete().eq('id',c.old.id).eq('revision',c.old.revision);const {data,error}=await query.select('id');if(error)throw error;if(data?.length!==1)throw Error('Запись изменена другим пользователем или доступ ограничен. Обновите данные.');}
 
-function connectionError(e){if(['42501','PGRST204','42703','42P01'].includes(e?.code))return 'База ещё не подготовлена или доступ ограничен. Выполните SQL миграции в Supabase.';return e?.message||'Не удалось связаться с базой данных Supabase (проверьте, не приостановлен ли проект).';}
+function connectionError(e){if(['42501','PGRST204','42703','42P01'].includes(e?.code))return 'База ещё не подготовлена или доступ ограничен. Выполните SQL миграции в Supabase.';return e?.message||'Не удалось связаться с базой данных Supabase (проверьте статус проекта в панели).';}
 function selectReportTasks(tasks,{year='all',month='all',category='',status=''}={}){return tasks.filter(t=>{const date=new Date(t.created_at);return (year==='all'||date.getFullYear()===Number(year))&&(month==='all'||date.getMonth()===Number(month))&&(!category||(category==='__unassigned'?!t.category:t.category===category))&&(!status||t.status===status);});}
 
 function Icon({name='circle',size=18}){const key=name.split('-').map(x=>x[0].toUpperCase()+x.slice(1)).join('');const icon=window.lucide?.icons?.[key];const data=icon?.[0]==='svg'?icon[2]:icon;return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{data?.map(([tag,attrs],i)=>React.createElement(tag,{...attrs,key:i}))}</svg>}
@@ -335,7 +335,7 @@ function App(){
   const [login,L]=useState(null);
   const user=db.users.find(u=>u.login===login&&u.is_active!==false);
   const manager=isManager(user),admin=isAdmin(user);
-  const [tab,T]=useState('tasks'),[mode,M]=useState('list'),[scope,S]=useState('all'),[filter,Filter]=useState('all'),[cat,Cat]=useState(''),[modal,Q]=useState(null),[toast,Toast]=useState(''),[ideaTab,IT]=useState('ideas'),[year,Y]=useState('all'),[month,Mo]=useState('all'),[reportStatus,RS]=useState(''),[expanded,EX]=useState(null);
+  const [tab,T]=useState('tasks'),[mode,M]=useState('list'),[scope,S]=useState('all'),[filter,Filter]=useState('all'),[cat,Cat]=useState(''),[modal,Q]=useState(null),[toast,Toast]=useState(''),[ideaTab,IT]=useState('ideas'),[year,Y]=useState('all'),[month,Mo]=useState('all'),[reportStatus,RS]=useState('');
 
   const notify=s=>{if(!saving.current)Toast(s)};const close=()=>{if(!saving.current)Q(null)};
   const refresh=async()=>{const epoch=authEpoch.current;Busy(true);LoadError('');try{const state=await readWorkspace();if(epoch===authEpoch.current){D(state.db);L(state.login);}}catch(e){LoadError(connectionError(e));throw e;}finally{Busy(false);}};
@@ -426,6 +426,7 @@ function App(){
       <div className="demo"><span>{busy?'Синхронизация…':'База Supabase подключена'}</span><button disabled={busy} onClick={()=>refresh().catch(()=>{})}>Обновить данные</button></div>
       {loadError&&<div className="notification" role="alert">{loadError}</div>}
 
+      {/* Вкладка 1: Задачи */}
       {tab==='tasks'&&<>
         <div className="between pagehead">
           <div><p className="eyebrow">Рабочее пространство</p><h1>{manager?'Задачи команды':'Мои задачи'}</h1><p className="subtitle">От идеи до результата — всё под контролем.</p></div>
@@ -446,6 +447,7 @@ function App(){
         {mode==='list'?(filtered.length?<div className="taskgrid">{filtered.map(taskCard)}</div>:<Empty>Задач по выбранным условиям нет</Empty>):<div className="kanban">{STATES.map(st=><section className="column" key={st}><div className="between columnhead"><span className={'chip '+statusColor(st)}>{st}</span><span className="muted">{filtered.filter(t=>t.status===st).length}</span></div>{filtered.filter(t=>t.status===st).map(taskCard)}{!filtered.some(t=>t.status===st)&&<Empty>Нет задач</Empty>}</section>)}</div>}
       </>}
 
+      {/* Вкладка 2: Отчёты */}
       {tab==='reports'&&manager&&<>
         <div className="between pagehead">
           <div><p className="eyebrow">Данные и результаты</p><h1>Отчёты и аналитика</h1><p className="subtitle">Период реестра — по дате создания задачи. Динамика закрытия — по дате завершения.</p></div>
@@ -483,6 +485,7 @@ function App(){
         </div>
       </>}
 
+      {/* Вкладка 3: Сезонные цели */}
       {tab==='goals'&&<>
         <div className="between pagehead">
           <div><p className="eyebrow">Большие планы</p><h1>Сезонные цели</h1><p className="subtitle">Общий вектор и персональный вклад.</p></div>
@@ -500,6 +503,7 @@ function App(){
         </div>
       </>}
 
+      {/* Вкладка 4: Идеи и Заметки */}
       {tab==='ideas'&&<div className="stack">
         <div className="between pagehead">
           <div><p className="eyebrow">Инициативы</p><h1>Идеи и заметки</h1><p className="subtitle">Сохраняйте идеи для развития и личные заметки.</p></div>
@@ -517,13 +521,43 @@ function App(){
         </article>)}</div>:<div className="ideagrid">{db.notes.filter(n=>n.user_login===user.login).map(n=><article className="glass idea" key={n.id}><p className="note">{n.text}</p><div className="between taskfooter"><small className="muted">{fmt(n.updated_at)}</small><div className="row"><Btn icon="pencil" onClick={()=>Q({type:'note',note:n})}/><Btn kind="danger" icon="trash-2" onClick={()=>Q({type:'deleteNote',note:n})}/></div></div></article>)}</div>}
       </div>}
 
+      {/* Вкладка 5: Управление командой (для lobo / SuperAdmin) */}
+      {tab==='team'&&admin&&<>
+        <div className="between pagehead">
+          <div><p className="eyebrow">Администрирование</p><h1>Управление командой</h1><p className="subtitle">Профили команды и привязка аккаунтов Supabase Auth.</p></div>
+          <Btn kind="primary" icon="user-plus" onClick={()=>Q({type:'person'})}>Добавить</Btn>
+        </div>
+        <div className="glass tablewrap">
+          <table>
+            <thead><tr><th>Пользователь</th><th>Логин</th><th>Роль</th><th>Статус</th><th>Действия</th></tr></thead>
+            <tbody>
+              {db.users.map(u=><tr key={u.id}>
+                <td><span className="row"><span className="avatar">{initials(u.name)}</span><span>{u.name}<small className="muted" style={{display:'block'}}>{u.position}</small></span></span></td>
+                <td>{u.login}</td>
+                <td>{u.role==='employee'?'Сотрудник':u.login==='lobo'?'SuperAdmin':'Руководство'}</td>
+                <td><span className={'chip '+(u.is_active?'emerald':'coral')}>{u.is_active?'Активен':'Отключён'}</span></td>
+                <td><Btn icon="pencil" onClick={()=>Q({type:'person',person:u})}>Изменить</Btn></td>
+              </tr>)}
+            </tbody>
+          </table>
+        </div>
+      </>}
+
       <p className="footertext">team Benoy Travel · Корпоративная система команды Кавказа</p>
     </main>
 
+    {/* Нижняя панель навигации */}
     <nav className="bottomnav">
-      {[['tasks','Задачи','layout-grid'],...(manager?[['reports','Отчёты','chart-no-axes-combined']]:[]),['goals','Цели','target'],['ideas','Идеи','lightbulb']].map(([t,label,icon])=><button key={t} className={tab===t?'active':''} onClick={()=>switchTab(t)}><Icon name={icon} size={20}/>{label}{t==='ideas'&&pending>0&&<span className="badge">{pending}</span>}</button>)}
+      {[
+        ['tasks','Задачи','layout-grid'],
+        ...(manager?[['reports','Отчёты','chart-no-axes-combined']]:[]),
+        ['goals','Цели','target'],
+        ['ideas','Идеи','lightbulb'],
+        ...(admin?[['team','Команда','users']]:[])
+      ].map(([t,label,icon])=><button key={t} className={tab===t?'active':''} onClick={()=>switchTab(t)}><Icon name={icon} size={20}/>{label}{t==='ideas'&&pending>0&&<span className="badge">{pending}</span>}</button>)}
     </nav>
 
+    {/* Модальные окна */}
     {modal&&<Modal title={{
       task:modal.task?'Редактировать задачу':'Назначить задачу',
       goal:modal.goal?'Изменить цель':'Добавить цель',
@@ -537,6 +571,7 @@ function App(){
       profile:'Ваш профиль',
       password:'Сменить пароль',
       system:'Система и состояние базы данных',
+      person:modal.person?'Изменить пользователя':'Добавить пользователя',
       connection:'Подключение рабочей базы'
     }[modal.type]} close={close}>
       {modal.type==='task'&&manager&&<TaskForm task={modal.task} idea={modal.idea} users={db.users} close={close} save={saveTask}/>}
@@ -546,8 +581,10 @@ function App(){
       {modal.type==='idea'&&<IdeaForm close={close} save={f=>{commit(d=>({...d,ideas:[{...f,id:uid(),author:user.name,user_login:user.login,status:'На рассмотрении',likes:[],created_at:iso()},...d.ideas]}));close();notify('Идея отправлена');}}/>}
       {modal.type==='note'&&<TextForm label="Личная заметка" initial={modal.note?.text||''} close={close} save={text=>{commit(d=>({...d,notes:modal.note?d.notes.map(n=>n.id===modal.note.id&&n.user_login===user.login?{...n,text,updated_at:iso()}:n):[{id:uid(),user_login:user.login,text,updated_at:iso()},...d.notes]}));close();notify('Заметка сохранена');}}/>}
       {modal.type==='system'&&admin&&<SystemOverviewView close={close}/>}
+      {modal.type==='person'&&admin&&<UserForm person={modal.person} users={db.users} close={close} save={p=>{commit(d=>({...d,users:modal.person?d.users.map(u=>u.id===modal.person.id?{...u,...p}:u):[...d.users,{...p,id:uid()}],tasks:d.tasks,goals:d.goals}));close();notify('Профиль обновлён');}}/>}
       {modal.type==='profile'&&<div className="stack">
         <div className="row"><span className="avatar" style={{width:50,height:50,fontSize:18}}>{initials(user.name)}</span><div><h3>{user.name}</h3><p className="muted">{user.login} · {admin?'SuperAdmin':manager?'Руководство':'Сотрудник'}</p></div></div>
+        {admin&&<Btn icon="users" onClick={()=>{switchTab('team');close();}}>Управление командой</Btn>}
         {admin&&<Btn icon="server" kind="primary" onClick={()=>Q({type:'system'})}>Состояние системы и БД</Btn>}
         <Btn icon="key-round" onClick={()=>Q({type:'password'})}>Сменить пароль</Btn>
         <Btn kind="danger" icon="log-out" onClick={async()=>{await sb.auth.signOut();D(blankDB());L(null);close();}}>Выйти</Btn>
@@ -571,7 +608,7 @@ function IdeaForm({save,close}){
 function Connection(){
   return <div className="stack">
     <p>Система team Benoy Travel работает напрямую с базой данных Supabase (PostgreSQL).</p>
-    <p className="connection">Если данные не загружаются, убедитесь, что база данных в Supabase не приостановлена (статус Active).</p>
+    <p className="connection">Если данные не загружаются, убедитесь, что проект в панели Supabase переведён в статус Active (нажата кнопка Unpause).</p>
   </div>;
 }
 
@@ -589,7 +626,7 @@ function Login({onLogin,connection,errorMessage}){
       if(!sb) throw Error('Клиент Supabase не инициализирован.');
       let loginTarget=identifier.trim();
       
-      // Если введен не email, разрешаем логин через RPC или корпоративный домен
+      // Разрешение логина сотрудника в email Supabase Auth
       if(!loginTarget.includes('@')){
         try{
           const {data:resolved}=await sb.rpc('benoy_resolve_login',{p_login:loginTarget});
