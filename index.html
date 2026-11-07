@@ -265,6 +265,7 @@ function UserForm({person,users,save,close}){
   return <form className="stack" onSubmit={e=>{e.preventDefault();const login=f.login.trim().toLowerCase();if(users.some(u=>u.login===login&&u.id!==person?.id)){E('Этот логин уже занят');return;}save({...f,login,name:f.name.trim(),auth_id:f.auth_id||null});}}>
     <Field label="Имя"><input required readOnly={!!person} className="input" value={f.name} onChange={e=>set('name',e.target.value)}/></Field>
     <Field label="Логин профиля"><input required readOnly={!!person} pattern="[a-zA-Z0-9_]{3,40}" className="input" value={f.login} onChange={e=>set('login',e.target.value)}/></Field>
+    <Field label="Права доступа (Роль)"><Select value={f.role} onChange={v=>set('role',v)} options={[{value:'employee',label:'Сотрудник (Доступ только к своим задачам)'},{value:'management',label:'Руководство (Все задачи, цели, приёмка)'},{value:'superadmin',label:'SuperAdmin (Полный доступ)'}]}/></Field>
     <Field label="Должность"><input className="input" value={f.position||''} onChange={e=>set('position',e.target.value)}/></Field>
     <Field label="User UID из Supabase Auth"><input readOnly={f.login==='lobo'} className="input" value={f.auth_id||''} onChange={e=>set('auth_id',e.target.value.trim())}/></Field>
     <Field label="Telegram username"><input className="input" value={f.telegram||''} onChange={e=>set('telegram',e.target.value.replace('@',''))}/></Field>
@@ -620,7 +621,22 @@ function App(){
       {modal.type==='idea'&&<IdeaForm close={close} save={f=>{commit(d=>({...d,ideas:[{...f,id:uid(),author:user.name,user_login:user.login,status:'На рассмотрении',likes:[],created_at:iso()},...d.ideas]}));close();notify('Идея отправлена');}}/>}
       {modal.type==='note'&&<TextForm label="Личная заметка" initial={modal.note?.text||''} close={close} save={text=>{commit(d=>({...d,notes:modal.note?d.notes.map(n=>n.id===modal.note.id&&n.user_login===user.login?{...n,text,updated_at:iso()}:n):[{id:uid(),user_login:user.login,text,updated_at:iso()},...d.notes]}));close();notify('Заметка сохранена');}}/>}
       {modal.type==='system'&&admin&&<SystemOverviewView close={close}/>}
-      {modal.type==='person'&&admin&&<UserForm person={modal.person} users={db.users} close={close} save={p=>{commit(d=>({...d,users:modal.person?d.users.map(u=>u.id===modal.person.id?{...u,...p}:u):[...d.users,{...p,id:uid()}],tasks:d.tasks,goals:d.goals}));close();notify('Профиль обновлён');}}/>}
+      
+      {/* Форма изменения профиля пользователя (Интеграция RPC для смены роли) */}
+      {modal.type==='person'&&admin&&<UserForm person={modal.person} users={db.users} close={close} save={async p=>{
+        if(modal.person && modal.person.role !== p.role){
+          try{
+            const {error}=await sb.rpc('benoy_admin_set_role',{p_user_login:p.login,p_new_role:p.role});
+            if(error) throw error;
+          }catch(err){
+            notify('Ошибка при смене роли: '+err.message);
+            return;
+          }
+        }
+        commit(d=>({...d,users:modal.person?d.users.map(u=>u.id===modal.person.id?{...u,...p}:u):[...d.users,{...p,id:uid()}],tasks:d.tasks,goals:d.goals}));
+        close();
+        notify('Профиль обновлён');
+      }}/>}
       
       {/* Модальное окно быстрой смены пароля сотрудника администратором */}
       {modal.type==='resetEmployeePass'&&admin&&<TextForm
