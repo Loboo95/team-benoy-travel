@@ -3,6 +3,1059 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0a0807">
+  <meta name="description" content="team Benoy Travel — корпоративная система команды. Задачи, отчёты, цели и управление.">
+  <title>team Benoy Travel</title>
+  <link rel="icon" type="image/png" href="./assets/benoy-travel-logo.png">
+
+  <!-- Локальные вендорные библиотеки -->
+  <script src="./assets/vendor/telegram-web-app.js"></script>
+  <script crossorigin src="./assets/vendor/react-18.3.1.js"></script>
+  <script crossorigin src="./assets/vendor/react-dom-18.3.1.js"></script>
+  <script src="./assets/vendor/babel-7.26.9.js"></script>
+  <script src="./assets/vendor/lucide-0.468.0.js"></script>
+  <script src="./assets/vendor/chart-4.4.8.js"></script>
+  <script src="./assets/vendor/supabase-2.116.0.js"></script>
+
+<style>
+/* === V4 EXACT MATCH (PREMIUM DARK GLASS & HIGHLIGHTS) === */
+:root {
+  color-scheme: dark;
+  --bg: #0a0807;
+  --glass-bg: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.01) 100%);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-highlight: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.05) 100%);
+  --muted: rgba(255, 255, 255, 0.45);
+  --text: #ffffff;
+  --accent: #ff5a36; /* Огненно-оранжевый */
+  --shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  /* Темный глубокий фон с имитацией свечения */
+  background: 
+    radial-gradient(circle at 20% 0%, #3a281d 0%, #110d0a 40%, #0a0807 100%),
+    #0a0807;
+  background-attachment: fixed;
+  color: var(--text);
+  font: 16px/1.5 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  min-height: 100vh;
+}
+
+button, input, textarea, select { font: inherit; }
+button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
+button { cursor: pointer; } 
+button:disabled { opacity: .45; cursor: not-allowed; }
+button, a { touch-action: manipulation; }
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+a { color: var(--accent); text-decoration: none; }
+h1, h2, h3, p { margin: 0; }
+h1 { font-size: 30px; font-weight: 700; letter-spacing: -1px; }
+h2 { font-size: 22px; font-weight: 650; letter-spacing: -0.5px; }
+h3 { font-size: 17px; font-weight: 600; }
+small { font-size: 13px; }
+.muted { color: var(--muted); }
+.row { display: flex; align-items: center; gap: 10px; }
+.between { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+.wrap { flex-wrap: wrap; }
+.stack { display: flex; flex-direction: column; gap: 16px; }
+
+/* Кнопки */
+.btn {
+  display: inline-flex; justify-content: center; align-items: center; gap: 8px;
+  min-height: 44px; padding: 10px 16px; border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #fff; font-size: 14px; font-weight: 600; transition: all .2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.btn:hover { background: rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.15); transform: translateY(-1px); }
+.btn:active { transform: scale(.97); }
+.primary { background: var(--accent); color: #fff; border-color: transparent; box-shadow: 0 4px 16px rgba(255, 90, 54, 0.3); }
+.primary:hover { background: #e04a29; border-color: transparent; }
+.danger { color: #f87171; background: rgba(239, 68, 68, 0.1); border-color: transparent; }
+.iconbtn { width: 44px; padding: 10px; }
+
+/* Теги статусов */
+.chip { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; border-radius: 8px; padding: 4px 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.05); }
+.emerald { color: #34d399; background: rgba(16, 185, 129, 0.1); }
+.sapphire { color: #38bdf8; background: rgba(14, 165, 233, 0.1); }
+.amber { color: #fbbf24; background: rgba(245, 158, 11, 0.1); }
+.coral { color: #fb7185; background: rgba(244, 63, 94, 0.1); }
+.violet { color: #c084fc; background: rgba(139, 92, 246, 0.1); }
+.pilldot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+.avatar { flex-shrink: 0; width: 36px; height: 36px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background: #2a2420; border: 1px solid rgba(255,255,255,0.1); color: #fff; font-size: 13px; font-weight: 650; }
+.brand-logo { width: 50px; height: 50px; object-fit: contain; border-radius: 50%; background: #fff; }
+.brand { font-weight: 700; letter-spacing: -0.5px; font-size: 19px; }
+.brand small { display: block; color: var(--accent); letter-spacing: 1.5px; font-weight: 600; font-size: 10px; margin-top: 2px; }
+
+/* Макет */
+.topbar { border-bottom: 1px solid rgba(255,255,255,0.05); padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.2); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); }
+.shell { max-width: 1320px; margin: auto; padding: 32px 20px 120px; }
+.eyebrow { font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; font-weight: 600; }
+.pagehead { margin-bottom: 24px; }
+
+/* === ГЛАВНАЯ СТЕКЛЯННАЯ ПАНЕЛЬ ДАШБОРДА === */
+.dashboard-glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(50px); -webkit-backdrop-filter: blur(50px);
+  border: 1px solid var(--glass-border);
+  border-top: 1px solid rgba(255, 255, 255, 0.15); /* Блик на верхнем крае панели */
+  border-radius: 36px; padding: 32px;
+  box-shadow: var(--shadow);
+  margin-bottom: 32px;
+}
+.hero-dashboard {
+  display: grid; grid-template-columns: 1fr 1.5fr 1fr; gap: 24px;
+  background: rgba(0,0,0,0.2); border-radius: 28px; padding: 24px;
+  border: 1px solid rgba(255,255,255,0.03); align-items: center;
+  box-shadow: inset 0 2px 10px rgba(0,0,0,0.2);
+}
+.hero-left .big-number { font-size: 46px; font-weight: 800; letter-spacing: -1.5px; margin: 8px 0; line-height: 1; }
+.hero-mid { display: flex; align-items: flex-end; justify-content: center; gap: 14px; height: 100px; padding: 10px; }
+.bar-fake { width: 28px; background: rgba(255,255,255,0.1); border-radius: 8px; transition: height .5s; }
+.bar-fake.active { background: var(--accent); box-shadow: 0 0 15px rgba(255,90,54,0.4); }
+
+.toggle-switch {
+  width: 48px; height: 26px; border-radius: 13px; background: rgba(0,0,0,0.4);
+  border: 1px solid rgba(255,255,255,0.08); position: relative; transition: .3s;
+  cursor: pointer; display: flex; align-items: center; padding: 2px;
+}
+.toggle-switch.on { background: var(--accent); border-color: var(--accent); }
+.toggle-switch .thumb {
+  width: 20px; height: 20px; background: #fff; border-radius: 50%;
+  transition: .3s cubic-bezier(0.4, 0, 0.2, 1); transform: translateX(0); box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+.toggle-switch.on .thumb { transform: translateX(22px); }
+
+/* === КАРТОЧКИ (СТЕКЛО И ВЫДЕЛЕНИЕ) === */
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 24px; }
+.ring-card {
+  background: rgba(0,0,0,0.15); /* Темное стекло в покое */
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 24px; padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative; overflow: hidden;
+}
+.ring-card:hover { transform: translateY(-4px); background: rgba(255,255,255,0.04); }
+
+/* ТО САМОЕ СТЕКЛО ДЛЯ ВЫДЕЛЕНИЯ */
+.ring-card.selected { 
+  background: var(--glass-highlight); /* Яркая стеклянная заливка */
+  border: 1px solid rgba(255,255,255,0.2);
+  border-top: 1px solid rgba(255,255,255,0.4); /* Верхний блик на стекле */
+  box-shadow: 0 15px 35px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.2);
+  transform: translateY(-4px);
+}
+
+.ring-wrapper {
+  width: 76px; height: 76px; border-radius: 50%;
+  background: conic-gradient(var(--c) var(--p), rgba(255,255,255,0.05) 0);
+  display: flex; align-items: center; justify-content: center; margin-bottom: 16px;
+}
+.ring-inner {
+  width: 60px; height: 60px; background: #181412; /* Темный центр */
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 16px; box-shadow: inset 0 2px 6px rgba(0,0,0,0.8);
+}
+.ring-card .title { font-weight: 600; font-size: 14px; margin-bottom: 4px; color: #fff; text-align: center; line-height: 1.2;}
+.ring-card .sub { font-size: 12px; color: var(--muted); margin-bottom: 16px; text-align: center;}
+.add-btn {
+  width: 100%; padding: 8px; border-radius: 12px; background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08); color: #fff; font-size: 12px; font-weight: 600;
+  display: flex; align-items: center; justify-content: center; transition: .2s;
+}
+.ring-card.selected .add-btn { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); }
+
+/* Задачи */
+.taskgrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.task { background: var(--glass-bg); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); padding: 20px; border-radius: 20px; transition: all 0.3s; position: relative; }
+.task:hover { transform: translateY(-4px); background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.15); box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
+.task h3 { margin: 12px 0 10px; line-height: 1.4; font-weight: 600; }
+.taskmeta { font-size: 12px; color: var(--muted); font-weight: 500; }
+.taskfooter { border-top: 1px solid rgba(255,255,255,0.05); padding-top: 14px; margin-top: 16px; }
+.progress { height: 6px; border-radius: 10px; background: rgba(255,255,255,0.05); overflow: hidden; }
+.progress > span { display: block; height: 100%; background: var(--accent); border-radius: 10px; }
+.checkrow { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; margin: 8px 0; color: #d6d3d1; }
+.checkrow input { accent-color: var(--accent); margin-top: 4px; width: 16px; height: 16px; flex-shrink: 0; }
+.taskactions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
+
+/* Канбан */
+.kanban { display: grid; grid-template-columns: repeat(4, minmax(280px, 1fr)); gap: 16px; overflow-x: auto; padding-bottom: 20px; align-items: start; }
+.column { padding: 14px; border-radius: 24px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.05); }
+.columnhead { padding: 4px 4px 16px; font-size: 14px; font-weight: 650; }
+
+/* === НИЖНЯЯ НАВИГАЦИЯ (СТЕКЛЯННАЯ ПОДЛОЖКА АКТИВНОГО ЭЛЕМЕНТА) === */
+.bottomnav { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; padding: 8px; z-index: 30; background: rgba(20, 15, 12, 0.85); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px); border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; box-shadow: 0 20px 60px rgba(0,0,0,0.6); }
+.bottomnav button { position: relative; display: flex; align-items: center; gap: 8px; background: transparent; color: var(--muted); border: 0; padding: 10px 18px; border-radius: 16px; font-size: 14px; font-weight: 600; transition: all .2s; }
+.bottomnav button:hover { color: #fff; background: rgba(255,255,255,0.05); }
+/* Стекло для выделения в навигации */
+.bottomnav button.active { 
+  background: rgba(255,255,255,0.15); /* Яркая полупрозрачная плашка */
+  color: #fff; 
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3), inset 0 1px 1px rgba(255,255,255,0.2); 
+}
+.badge { background: var(--accent); color: #fff; font-size: 11px; min-width: 20px; height: 20px; border-radius: 10px; display: grid; place-items: center; font-weight: 700; box-shadow: 0 2px 8px rgba(255,90,54,0.4); }
+
+/* Формы, Инпуты, Модалки */
+.filters { display: flex; gap: 12px; flex-wrap: wrap; margin: 20px 0; }
+.field { display: flex; flex-direction: column; gap: 8px; font-size: 14px; min-width: 0; font-weight: 500; }
+.input { width: 100%; padding: 12px 14px; min-height: 48px; color: #fff; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; transition: all .2s; }
+.input:focus { border-color: rgba(255,255,255,0.3); background: rgba(0,0,0,0.5); box-shadow: 0 0 0 4px rgba(255,255,255,0.05); }
+.input::placeholder { color: rgba(255,255,255,0.3); }
+textarea.input { min-height: 100px; resize: vertical; }
+
+.overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); display: flex; align-items: center; justify-content: center; padding: 16px; z-index: 100; }
+.modal { width: 100%; max-width: 600px; max-height: 90dvh; overflow-y: auto; padding: 32px; background: #16120f; border: 1px solid rgba(255,255,255,0.1); border-top: 1px solid rgba(255,255,255,0.2); border-radius: 28px; box-shadow: 0 40px 100px rgba(0,0,0,0.8); }
+.modalhead { margin-bottom: 24px; }
+.formgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.span2 { grid-column: 1 / -1; }
+.modalfoot { margin-top: 28px; display: flex; justify-content: flex-end; gap: 12px; }
+
+/* Графики и таблицы */
+.charts { display: grid; grid-template-columns: 1.35fr 1fr 1fr; gap: 16px; }
+.chartbox { background: var(--glass-bg); border: 1px solid var(--glass-border); padding: 24px; border-radius: 24px; min-width: 0; }
+.chartcanvas { height: 220px; position: relative; margin-top: 20px; }
+.tablewrap { overflow: auto; border-radius: 20px; background: var(--glass-bg); border: 1px solid var(--glass-border); }
+table { border-collapse: collapse; width: 100%; text-align: left; font-size: 14px; }
+th { font-size: 13px; font-weight: 600; color: var(--muted); background: rgba(0,0,0,0.2); white-space: nowrap; }
+td, th { padding: 16px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+
+/* Остальное */
+.empty { text-align: center; padding: 48px 20px; color: var(--muted); border: 2px dashed rgba(255,255,255,0.1); border-radius: 24px; font-weight: 500; }
+.goalgrid, .ideagrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.goal, .idea { background: var(--glass-bg); border: 1px solid var(--glass-border); padding: 24px; border-radius: 24px; transition: transform .3s; }
+.goal:hover, .idea:hover { transform: translateY(-4px); background: rgba(255,255,255,0.04); }
+.toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 200; max-width: 90%; padding: 14px 24px; background: #2a2420; border: 1px solid rgba(255,255,255,0.15); border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); font-size: 14px; font-weight: 600; color: #fff; }
+
+.login { max-width: 440px; margin: 8vh auto; padding: 40px; border-top: 4px solid var(--accent); background: var(--glass-bg); backdrop-filter: blur(40px); border: 1px solid var(--glass-border); border-radius: 32px; box-shadow: var(--shadow); }
+.error { color: var(--red); font-size: 14px; margin-top: 12px; font-weight: 500; }
+.note { white-space: pre-wrap; overflow-wrap: anywhere; }
+.sectiontitle { margin: 32px 0 16px; font-size: 20px; font-weight: 700; }
+.notification, .warnbox { margin-top: 12px; padding: 12px 16px; font-size: 14px; font-weight: 500; border-radius: 12px; }
+.notification { background: rgba(245, 158, 11, 0.1); border-left: 3px solid #fbbf24; color: #fcd34d; }
+.warnbox { background: rgba(239, 68, 68, 0.15); border-left: 3px solid #f87171; color: #fca5a5; }
+
+@media(max-width:1100px){
+  .hero-dashboard { grid-template-columns: 1fr; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .taskgrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .charts{grid-template-columns:1fr 1fr}.chartbox:first-child{grid-column:1/-1}
+}
+@media(max-width:640px){
+  .shell{padding:16px 12px 115px}.topbar{padding:12px 16px}.topbar .desktop{display:none}h1{font-size:24px}
+  .dashboard-glass-panel { padding: 20px; border-radius: 28px; }
+  /* ИСПРАВЛЕНИЕ СЕТКИ СТАТИСТИКИ ДЛЯ МОБИЛЬНЫХ */
+  .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .ring-card { padding: 16px; }
+  .ring-card .title { font-size: 12px; }
+  
+  .taskgrid,.goalgrid,.ideagrid,.charts{grid-template-columns:1fr}
+  .bottomnav{bottom:0;width:100%;border-radius:24px 24px 0 0;justify-content:space-around;padding:10px 4px calc(10px + env(safe-area-inset-bottom));gap:0; background: rgba(15,12,10,0.9); }
+  .bottomnav button{flex:1;flex-direction:column;gap:6px;padding:10px 4px;font-size:12px; border-radius:16px;}
+  .brand-logo{width:40px;height:40px}.brand{font-size:17px}.brand small{font-size:9px}
+  .kanban{grid-template-columns:repeat(4,280px)}
+  .modal{padding: 24px; border-radius: 24px 24px 0 0; margin-top: auto;}
+}
+</style>
+</head>
+<body>
+<div id="root">
+  <div style="padding:40px;color:rgba(255,255,255,0.5)">team Benoy Travel · Загрузка приложения…<noscript>Для работы приложения включите JavaScript.</noscript></div>
+</div>
+
+<script>
+setTimeout(function(){
+  if(!window.BENOY_READY){
+    var el=document.getElementById('root');
+    if(el) el.innerHTML='<div style="padding:40px;color:rgba(255,255,255,0.5)">Не удалось загрузить приложение. Обновите страницу. Если ошибка повторится, проверьте консоль браузера (F12) или статус базы данных.</div>';
+  }
+},15000);
+</script>
+
+<script type="text/babel" data-presets="react">
+const {useState,useEffect,useRef}=React;
+const URL_DB='https://xoevxoqyskyieizghgnf.supabase.co';
+const ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvZXZ4b3F5c2t5aWVpemdoZ25mIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg4MjExNzYsImV4cCI6MjEwNDM5NzE3Nn0.Iglp_tzHYmeu8drhVUaIsezx_o590E8GG-nJ9QOP39Q';
+const sb=window.supabase?.createClient(URL_DB,ANON_KEY,{auth:{persistSession:true,autoRefreshToken:true}});
+
+const STATES=['К выполнению','В работе','На проверке','Выполнена'];
+const CATS=[
+  "Benoy Travel (основной туризм)", "iTur (зарубежные туры и визы)", "Райский Уголок", 
+  "Вип Грозный", "Эко ферма Кундухово", "Отель Грозный", "Курорт Беной", "Вип Беной", 
+  "Экскурсии и авторские туры", "Транспортный отдел (автопарк, джипы, трансферы, ТО)", 
+  "Маркетинг, PR и SMM", "Наружная реклама и полиграфия", "IT, сайт и кибербезопасность", 
+  "Корпоративные программы / B2B"
+];
+const MONTHS=['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+
+const uid=()=>crypto.randomUUID();
+const iso=()=>new Date().toISOString();
+const at=(days,h=18)=>{let d=new Date();d.setDate(d.getDate()+days);d.setHours(h,0,0,0);return d.toISOString()};
+const initials=n=>(n||'?').split(' ').map(x=>x[0]).slice(0,2).join('');
+const isManager=u=>!!u&&['management','superadmin'].includes(u.role)&&u.is_active!==false;
+const isAdmin=u=>!!u&&u.login==='lobo'&&u.role==='superadmin'&&u.is_active!==false;
+const overdue=t=>t.status!=='Выполнена'&&Number.isFinite(Date.parse(t.deadline))&&Date.parse(t.deadline)<Date.now();
+const fmt=d=>d&&Number.isFinite(Date.parse(d))?new Date(d).toLocaleDateString('ru-RU',{day:'numeric',month:'short'}):'Без срока';
+const localDate=d=>{if(!d||!Number.isFinite(Date.parse(d)))return '';let x=new Date(d);return new Date(x.getTime()-x.getTimezoneOffset()*60000).toISOString().slice(0,16)};
+const statusColor=s=>['','sapphire','violet','emerald'][STATES.indexOf(s)]||'';
+const safeLink=s=>{try{const u=new URL(s);return ['https:','http:'].includes(u.protocol)?u.href:null}catch{return null}};
+function urgency(t){if(t.status==='Выполнена'||!t.deadline)return null;const d=new Date(t.deadline);if(!Number.isFinite(+d))return null;if(+d<Date.now())return ['⚠️ Просрочено','coral'];if(d.toDateString()===new Date().toDateString())return ['🔥 Горит сегодня','coral'];if(+d-Date.now()<86400000)return ['⏳ < 24ч','amber'];return null}
+const audit=(u,text)=>({at:iso(),by:u.name,text});
+
+const ROSTER=[
+  {"login": "iskhak", "name": "Исхак", "position": "Маркетинг и продажи", "role": "management", "is_assignee": true}, 
+  {"login": "zelimkhan", "name": "Зелимхан Ахмедов", "position": "Технический отдел по транспорту, автопарк", "role": "employee", "is_assignee": true}, 
+  {"login": "magomed_m", "name": "Магомед Мецалов", "position": "Директор компании", "role": "employee", "is_assignee": true}, 
+  {"login": "ahmed_m", "name": "Ахмед Мецалов", "position": "Заместитель директора", "role": "employee", "is_assignee": true}, 
+  {"login": "ali_m", "name": "Али Мецалов", "position": "Журналист, копирайтер", "role": "employee", "is_assignee": true}, 
+  {"login": "musa_m", "name": "Муса Мецалов", "position": "Свободная категория", "role": "employee", "is_assignee": true}, 
+  {"login": "nadirsolta", "name": "Надирсолта Эльсункаев", "position": "Советник директора, сайт, исторический контент", "role": "employee", "is_assignee": true}, 
+  {"login": "ruslan_i", "name": "Руслан Идалов", "position": "Заместитель директора, ответственный по турам", "role": "employee", "is_assignee": true}, 
+  {"login": "magomed_sh", "name": "Магомед Шабаев", "position": "IT: сайты, почты, безопасность", "role": "employee", "is_assignee": true}, 
+  {"login": "magomed_r", "name": "Магомед Рашидов", "position": "Гид-экскурсовод", "role": "employee", "is_assignee": true}, 
+  {"login": "ruslan_k", "name": "Руслан Коканаев", "position": "Гид-экскурсовод", "role": "employee", "is_assignee": true}, 
+  {"login": "mohmad_k", "name": "Мохьмад Кундухово", "position": "Руководитель базы «Эко ферма Кундухово»", "role": "employee", "is_assignee": true}, 
+  {"login": "yusup", "name": "Юсуп Абубакаров", "position": "Отдел продаж", "role": "employee", "is_assignee": true}, 
+  {"login": "islam_a", "name": "Ислам Алгаев", "position": "Наружная реклама, типографии, агентства", "role": "employee", "is_assignee": true}, 
+  {"login": "abubakar", "name": "Абубакар Албасханов", "position": "Видеооператор, мобилограф, SMM", "role": "employee", "is_assignee": true}, 
+  {"login": "lobo", "name": "Ислам Калаев", "position": "Администратор, маркетинг, продажи и стратегия", "role": "superadmin", "is_assignee": true}, 
+  {"login": "rustam", "name": "Рустам Эльсункаев", "position": "", "role": "employee", "is_assignee": true}, 
+  {"login": "boss", "name": "Сулейман", "position": "Собственник и генеральный директор", "role": "management", "is_assignee": false}
+];
+const assignees=users=>users.filter(u=>u.is_active!==false&&u.login!=='boss'&&u.is_assignee!==false);
+
+const PROFILE_COLUMNS='id,login,name,role,is_active,auth_id,telegram,position,is_assignee,revision';
+const blankDB=()=>({users:[],tasks:[],goals:[],ideas:[],notes:[]});
+const businessCategory=c=>CATS.includes(c)?c:({'Benoy Travel':CATS[0],'iTur':CATS,'Транспорт':CATS[9],'Маркетинг и SMM':CATS[10],'Маркетинг':CATS[10],'Внутренний туризм':CATS[0],'Выездной туризм':CATS,'Экскурсии':CATS[8],'Трансферы':CATS[9],'Продажи':CATS[0]})[c]||'';
+
+function normalizeRow(table,r){
+  const base={...r,id:String(r.id),_raw:r};
+  if(table==='users'){const reference=ROSTER.find(u=>u.login===r.login);return {...reference,...base,position:r.position||reference?.position||'',is_assignee:r.login!=='boss'&&r.is_assignee!==false};}
+  if(table==='tasks')return {
+    ...base,
+    text:r.title,
+    category:businessCategory(r.category),
+    deadline:r.deadline_at||(r.deadline?r.deadline+'T23:59:59+03:00':null),
+    checklist:(r.checklist||[]).map((c,i)=>({...c,id:c.id||String(i),text:c.title??c.text??'',done:!!c.done})),
+    history:(r.history||[]).map(h=>({...h,at:h.at||h.date,by:h.by||h.user,text:h.text||h.action})),
+    attachments:r.attachments||'',
+    rejection_reason:r.rejection_reason||'',
+    status:r.status||'К выполнению',
+    needs_object_clarification:(r.task_id==='BT-2'||r.category==='Отель и Базы')
+  };
+  if(table==='goals')return {...base,progress:r.target_value>0?Math.round(r.current_value/r.target_value*100):0,description:r.description||''};
+  if(table==='ideas')return {...base,text:r.description||'',likes:r.likes||[],user_login:''};
+  if(table==='notes')return {...base,text:r.content||'',updated_at:r.updated_at||r.created_at};
+}
+
+async function readRows(table){let all=[];for(let offset=0;;offset+=1000){const {data,error}=await sb.from(table).select(table==='users'?PROFILE_COLUMNS:'*').order('id').range(offset,offset+999);if(error)throw error;all.push(...data.map(r=>normalizeRow(table,r)));if(data.length<1000)return all;}}
+async function readWorkspace(){
+  if(!sb)throw Error('Не загрузился клиент подключения к базе. Обновите страницу.');
+  const {data,error}=await sb.auth.getUser();
+  if(error)throw error;
+  if(!data.user)throw Error('Войдите в систему');
+  const users=await readRows('users');
+  const me=users.find(u=>u.auth_id===data.user.id);
+  if(!me)throw Error('Аккаунт ещё не связан с профилем сотрудника');
+  if(!me.is_active)throw Error('Учетная запись деактивирована администратором');
+  const rows=await Promise.all(['tasks','goals','ideas','notes'].map(readRows));
+  return {login:me.login,db:{users,...Object.fromEntries(['tasks','goals','ideas','notes'].map((t,i)=>[t,rows[i]]))}};
+}
+
+function databasePatch(table,old,next){
+  const out={};const put=(key,value,field=key)=>{if(!old||JSON.stringify(old[field])!==JSON.stringify(next[field]))out[key]=value;};
+  if(table==='tasks'){
+    put('title',next.text,'text');put('assignee',next.assignee);put('category',next.category);put('priority',next.priority);put('status',next.status);put('deadline_at',next.deadline||null,'deadline');put('attachments',next.attachments||'');put('rejection_reason',next.rejection_reason||'');
+    if(!old||JSON.stringify(old.checklist)!==JSON.stringify(next.checklist))out.checklist=(next.checklist||[]).map((c,i)=>{const raw=old?._raw?.checklist?.[i];return raw&&(raw.title??raw.text??'')===c.text?{...raw,done:!!c.done}:{id:c.id||uid(),title:c.text,done:!!c.done};});
+    if(!old){out.task_id='BT-'+uid();delete out.status;}
+  }else if(table==='goals'){
+    for(const k of ['title','description','deadline','target_type','assignee_name'])put(k,k==='description'?(next[k]||''):k==='deadline'?(next[k]?.slice(0,10)||null):(next[k]||null));
+    if(!old){out.season=next.season||'Сезон '+new Date().getFullYear();out.target_value=next.target_value||100;out.metric=next.metric||'%';}
+    if(!old||old.progress!==next.progress)out.current_value=Math.round(Number(next.progress)*(old?.target_value||out.target_value||100)/100);
+  }else if(table==='ideas'){
+    put('title',next.title);put('description',next.text,'text');put('status',next.status);put('likes',next.likes||[]);
+    if(!old){out.author=next.author;out.category='Общее';delete out.status;delete out.likes;}
+  }else if(table==='notes'){
+    put('content',next.text,'text');if(!old){out.title=next.text.slice(0,80)||'Заметка';out.user_login=next.user_login;}
+  }else if(table==='users'){
+    for(const k of ['is_active','auth_id','telegram','position','is_assignee'])put(k,next[k]??(k==='auth_id'?null:''));
+    if(!old){out.login=next.login;out.name=next.name;out.role=next.role;} 
+  }
+  return out;
+}
+
+function workspaceChanges(before,after){const changes=[];for(const table of ['users','tasks','goals','ideas','notes']){const old=new Map(before[table].map(r=>[r.id,r]));for(const row of after[table]){const prior=old.get(row.id);const payload=databasePatch(table,prior,row);if(Object.keys(payload).length)changes.push({table,old:prior,payload,action:prior?'update':'insert'});old.delete(row.id);}for(const row of old.values())changes.push({table,old:row,action:'delete'});}return changes;}
+async function saveWorkspace(before,after){const changes=workspaceChanges(before,after);if(!changes.length)return;if(changes.length!==1)throw Error('Сохраните изменения одной записи за раз');const c=changes[0];let query=sb.from(c.table);if(c.action==='insert')query=query.insert(c.payload);else if(c.action==='update')query=query.update(c.payload).eq('id',c.old.id).eq('revision',c.old.revision);else query=query.delete().eq('id',c.old.id).eq('revision',c.old.revision);const {data,error}=await query.select('id');if(error)throw error;if(data?.length!==1)throw Error('Запись изменена другим пользователем или доступ ограничен. Обновите данные.');}
+
+function connectionError(e){if(['42501','PGRST204','42703','42P01'].includes(e?.code))return 'База ещё не подготовлена или доступ ограничен. Выполните SQL миграции в Supabase.';return e?.message||'Не удалось связаться с базой данных Supabase (проверьте статус проекта в панели).';}
+function selectReportTasks(tasks,{year='all',month='all',category='',status=''}={}){return tasks.filter(t=>{const date=new Date(t.created_at);return (year==='all'||date.getFullYear()===Number(year))&&(month==='all'||date.getMonth()===Number(month))&&(!category||(category==='__unassigned'?!t.category:t.category===category))&&(!status||t.status===status);});}
+
+function Icon({name='circle',size=18}){const key=name.split('-').map(x=>x[0].toUpperCase()+x.slice(1)).join('');const icon=window.lucide?.icons?.[key];const data=icon?.[0]==='svg'?icon[2]:icon;return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{data?.map(([tag,attrs],i)=>React.createElement(tag,{...attrs,key:i}))}</svg>}
+function Btn({children,icon,onClick,kind='',...p}){return <button type="button" className={'btn '+kind} onClick={onClick} {...p}>{icon&&<Icon name={icon}/>} {children}</button>}
+function Empty({children='Здесь пока ничего нет'}){return <div className="empty"><Icon name="inbox" size={28}/><p style={{marginTop:12}}>{children}</p></div>}
+function Modal({title,close,children}){const ref=useRef();useEffect(()=>{const prev=document.activeElement;ref.current?.querySelector('input,textarea,select,button')?.focus();const f=e=>{if(e.key==='Escape')close();};document.addEventListener('keydown',f);let old=document.body.style.overflow;document.body.style.overflow='hidden';return()=>{document.removeEventListener('keydown',f);document.body.style.overflow=old;prev?.focus()}},[]);return <div className="overlay" onMouseDown={e=>{if(e.target===e.currentTarget)close()}}><section className="modal" role="dialog" aria-modal="true" ref={ref}><div className="between modalhead"><h2>{title}</h2><Btn icon="x" kind="iconbtn" aria-label="Закрыть" onClick={close}/></div>{children}</section></div>}
+function Field({label,children,wide=false}){return <label className={'field '+(wide?'span2':'')}><span className="muted">{label}</span>{children}</label>}
+function Select({value,onChange,options,...rest}){return <select className="input" value={value} onChange={e=>onChange(e.target.value)} {...rest}>{options.map(x=><option key={typeof x==='string'?x:x.value} value={typeof x==='string'?x:x.value}>{typeof x==='string'?x:x.label}</option>)}</select>}
+
+function TaskForm({task,idea,users,save,close}){
+  const [f,F]=useState(task?{...task,deadline:localDate(task.deadline),checklist:(task.checklist||[]).map(x=>({...x}))}:{text:idea?idea.title+'\n'+idea.text:'',assignee:users.find(u=>u.role==='employee')?.name||users[0]?.name||'',category:CATS[0],deadline:localDate(at(1)),priority:'Обычный',attachments:'',checklist:[]});
+  const [error,E]=useState('');const set=(k,v)=>F(a=>({...a,[k]:v}));
+  return <form onSubmit={e=>{e.preventDefault();if(!f.text.trim()||!f.assignee||!f.deadline||!CATS.includes(f.category)){E('Заполните текст, исполнителя, направление и дедлайн');return}if(f.attachments&&!safeLink(f.attachments)){E('Укажите корректную http/https-ссылку');return}save({...f,text:f.text.trim(),deadline:new Date(f.deadline).toISOString(),checklist:f.checklist.filter(x=>x.text.trim())})}}>
+    <div className="formgrid">
+      <Field label="Задача" wide><textarea required maxLength={4000} className="input" value={f.text} onChange={e=>set('text',e.target.value)} placeholder="Какой результат нужно получить?"/></Field>
+      <Field label="Исполнитель"><Select value={f.assignee} onChange={v=>set('assignee',v)} options={assignees(users).map(u=>({value:u.name,label:u.name+(u.position?' — '+u.position:'')}))}/></Field>
+      <Field label="Направление"><Select value={f.category} onChange={v=>set('category',v)} options={[{value:'',label:'Выберите направление'},...CATS]}/>{f.category==='Курорт Беной'&&<small className="muted">«Курорт Беной» — собственная база компании.</small>}{f.category==='Экскурсии и авторские туры'&&<small className="muted">Ахки-ТIай — сторонняя достопримечательность.</small>}</Field>
+      <Field label="Дедлайн (местное время)"><input required className="input" type="datetime-local" value={f.deadline} onChange={e=>set('deadline',e.target.value)}/></Field>
+      <Field label="Приоритет"><Select value={f.priority} onChange={v=>set('priority',v)} options={['Обычный','Высокий','Срочный','Низкий']}/></Field>
+      <Field label="Ссылка на материалы" wide><input className="input" type="url" value={f.attachments||''} onChange={e=>set('attachments',e.target.value)} placeholder="https://…"/></Field>
+      <div className="span2 stack"><div className="between"><span className="muted">Чек-лист</span><Btn icon="plus" onClick={()=>set('checklist',[...f.checklist,{id:uid(),text:'',done:false}])}>Пункт</Btn></div>{f.checklist.map((c,i)=><div key={c.id||i} className="row"><input className="input" value={c.text} onChange={e=>set('checklist',f.checklist.map((x,j)=>j===i?{...x,text:e.target.value}:x))}/><Btn icon="x" onClick={()=>set('checklist',f.checklist.filter((_,j)=>i!==j))}/></div>)}</div>
+    </div>
+    {error&&<p className="error">{error}</p>}
+    <div className="modalfoot"><Btn onClick={close}>Отмена</Btn><button className="btn primary" type="submit">{task?'Сохранить изменения':'Назначить задачу'}</button></div>
+  </form>
+}
+
+function GoalForm({goal,users,save,close}){
+  const [f,F]=useState(goal||{title:'',description:'',progress:0,target_type:'all',assignee_name:'',deadline:at(30)});
+  const set=(k,v)=>F(a=>({...a,[k]:v}));
+  return <form onSubmit={e=>{e.preventDefault();save({...f,title:f.title.trim()})}} className="stack">
+    <Field label="Название цели"><input required className="input" value={f.title} onChange={e=>set('title',e.target.value)}/></Field>
+    <Field label="Описание"><textarea className="input" value={f.description||''} onChange={e=>set('description',e.target.value)}/></Field>
+    <Field label="Кому назначена"><Select value={f.target_type} onChange={v=>set('target_type',v)} options={[{value:'all',label:'Общая цель (для всех)'},{value:'personal',label:'Персональная цель'}]}/></Field>
+    {f.target_type==='personal'&&<Field label="Исполнитель"><select required className="input" value={f.assignee_name} onChange={e=>set('assignee_name',e.target.value)}><option value="">Выберите исполнителя</option>{assignees(users).map(u=><option key={u.id} value={u.name}>{u.name}{u.position?' — '+u.position:''}</option>)}</select></Field>}
+    <Field label={'Прогресс: '+f.progress+'%'}><input type="range" min="0" max="100" value={f.progress} onChange={e=>set('progress',Number(e.target.value))} style={{accentColor:'var(--accent)'}}/></Field>
+    <Field label="Срок"><input required type="date" className="input" value={f.deadline?.slice(0,10)||''} onChange={e=>set('deadline',e.target.value)}/></Field>
+    <div className="modalfoot"><Btn onClick={close}>Отмена</Btn><button className="btn primary" type="submit">Сохранить цель</button></div>
+  </form>
+}
+
+function UserForm({person,users,save,close}){
+  const [f,F]=useState(person?{...person}:{name:'',login:'',role:'employee',telegram:'',position:'',auth_id:'',is_active:true,is_assignee:true});
+  const [err,E]=useState('');const set=(k,v)=>F(a=>({...a,[k]:v}));
+  
+  return <form className="stack" onSubmit={e=>{e.preventDefault();const login=f.login.trim().toLowerCase();if(users.some(u=>u.login===login&&u.id!==person?.id)){E('Этот логин уже занят');return;}save({...f,login,name:f.name.trim(),auth_id:f.auth_id||null});}}>
+    <Field label="Имя"><input required readOnly={!!person} className="input" value={f.name} onChange={e=>set('name',e.target.value)}/></Field>
+    <Field label="Логин профиля"><input required readOnly={!!person} pattern="[a-zA-Z0-9_]{3,40}" className="input" value={f.login} onChange={e=>set('login',e.target.value)}/></Field>
+    
+    <Field label="Права доступа (Роль)">
+      <select className="input" value={f.role} onChange={e=>set('role',e.target.value)}>
+        <option value="employee">Сотрудник (Доступ только к своим задачам)</option>
+        <option value="management">Руководство (Все задачи, цели, приёмка)</option>
+        <option value="superadmin">SuperAdmin (Полный доступ)</option>
+      </select>
+    </Field>
+
+    <Field label="Должность"><input className="input" value={f.position||''} onChange={e=>set('position',e.target.value)}/></Field>
+    <Field label="User UID из Supabase Auth"><input readOnly={f.login==='lobo'} className="input" value={f.auth_id||''} onChange={e=>set('auth_id',e.target.value.trim())}/></Field>
+    <Field label="Telegram username"><input className="input" value={f.telegram||''} onChange={e=>set('telegram',e.target.value.replace('@',''))}/></Field>
+    {f.login!=='lobo'&&<label className="checkrow"><input type="checkbox" checked={f.is_active} onChange={e=>set('is_active',e.target.checked)}/>Учётная запись активна</label>}
+    {err&&<p className="error">{err}</p>}
+    <div className="modalfoot"><Btn onClick={close}>Отмена</Btn><button className="btn primary">Сохранить</button></div>
+  </form>
+}
+
+function TextForm({label,initial='',save,close,button='Сохранить',password=false}){
+  const [v,V]=useState(initial);
+  return <form onSubmit={e=>{e.preventDefault();if(v.trim())save(v.trim())}}>
+    <Field label={label}>{password?<input required minLength="6" type="password" className="input" value={v} onChange={e=>V(e.target.value)}/>:<textarea autoFocus required maxLength={8000} className="input" value={v} onChange={e=>V(e.target.value)}/>}</Field>
+    <div className="modalfoot"><Btn onClick={close}>Отмена</Btn><button className="btn primary" type="submit">{button}</button></div>
+  </form>
+}
+
+function ChartPanel({title,type,labels,data,colors}){
+  const ref=useRef();
+  useEffect(()=>{
+    if(!window.Chart)return;
+    const c=new Chart(ref.current,{type,data:{labels,datasets:[{label:title,data,borderColor:type==='line'?'var(--accent)':colors,backgroundColor:type==='line'?'rgba(255,90,54,0.15)':colors,borderWidth:type==='line'?3:0,fill:type==='line',tension:.4,pointRadius:4,borderRadius:type==='bar'?8:0}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:type==='bar'?'y':'x',plugins:{legend:{display:type==='doughnut',position:'bottom',labels:{color:'rgba(255,255,255,0.7)',boxWidth:8,padding:14,font:{size:12}}}},...(type==='doughnut'?{cutout:'77%'}:{scales:{x:{grid:{display:false},ticks:{color:'rgba(255,255,255,0.5)',font:{size:11}}},y:{beginAtZero:true,grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'rgba(255,255,255,0.5)',precision:0,font:{size:11}}}}})}});
+    return()=>c.destroy();
+  },[JSON.stringify({labels,data,type})]);
+  return <div className="chartbox"><h3>{title}</h3>{window.Chart?<div className="chartcanvas"><canvas ref={ref}/></div>:<p className="error">Графики доступны в реестре.</p>}</div>;
+}
+
+function SystemOverviewView({close}){
+  const [data,setData]=useState(null);const [loading,setLoading]=useState(true);const [err,setErr]=useState('');
+  useEffect(()=>{
+    async function load(){
+      try{
+        setLoading(true);
+        const start=Date.now();
+        const {data:res,error}=await sb.rpc('benoy_system_overview');
+        if(error) throw error;
+        setData({...res,ping:Date.now()-start});
+      }catch(e){setErr(e.message||'Не удалось получить данные от сервера.');}
+      finally{setLoading(false);}
+    }
+    load();
+  },[]);
+  if(loading)return <div className="stack" style={{padding:20}}><Icon name="loader" size={24}/><p className="muted">Связываемся с сервером базы данных…</p></div>;
+  if(err)return <div className="stack"><p className="error">{err}</p><p className="muted">Убедитесь, что проект Supabase активен (Unpause).</p></div>;
+  return <div className="stack">
+    <div className="row wrap between"><span className="chip emerald"><span className="pilldot"/>База данных: {data.status||'online'}</span><span className="muted mini">Задержка сети: {data.ping} мс</span></div>
+    <div className="stats-grid" style={{gridTemplateColumns:'repeat(3,1fr)',margin:'10px 0'}}>
+      <div className="ring-card" style={{alignItems:'flex-start', padding:20}}><div className="muted" style={{fontSize:13}}>Размер БД</div><div style={{fontSize:24, fontWeight:700, margin:'4px 0'}}>{data.database_bytes?Math.round(data.database_bytes/1024)+' КБ':'—'}</div></div>
+      <div className="ring-card" style={{alignItems:'flex-start', padding:20}}><div className="muted" style={{fontSize:13}}>Профили</div><div style={{fontSize:24, fontWeight:700, margin:'4px 0'}}>{data.active_profiles||0}</div></div>
+      <div className="ring-card" style={{alignItems:'flex-start', padding:20}}><div className="muted" style={{fontSize:13}}>Auth-аккаунты</div><div style={{fontSize:24, fontWeight:700, margin:'4px 0'}}>{data.auth_accounts||0}</div></div>
+    </div>
+    <div style={{padding:24, background:'rgba(255,255,255,0.03)', borderRadius:24, border:'1px solid rgba(255,255,255,0.05)'}}>
+      <h3 style={{marginBottom:14}}>Состояние таблиц</h3>
+      <table style={{fontSize:13}}>
+        <thead><tr><th>Таблица</th><th>Строк</th><th>Объём</th></tr></thead>
+        <tbody>
+          {(data.table_stats||[]).map((t,i)=><tr key={i}><td>{t.table_name}</td><td>{t.row_estimate}</td><td>{Math.round(t.total_bytes/1024)} КБ</td></tr>)}
+        </tbody>
+      </table>
+    </div>
+    <div className="modalfoot"><Btn onClick={close}>Закрыть</Btn></div>
+  </div>;
+}
+
+function App(){
+  const [db,D]=useState(blankDB);const saving=useRef(false),authEpoch=useRef(0);
+  const [busy,Busy]=useState(false),[loadError,LoadError]=useState('');
+  const [login,L]=useState(null);
+  const user=db.users.find(u=>u.login===login&&u.is_active!==false);
+  const manager=isManager(user),admin=isAdmin(user);
+  const [tab,T]=useState('tasks'),[mode,M]=useState('list'),[scope,S]=useState('all'),[filter,Filter]=useState('all'),[cat,Cat]=useState(''),[modal,Q]=useState(null),[toast,Toast]=useState(''),[ideaTab,IT]=useState('ideas'),[year,Y]=useState('all'),[month,Mo]=useState('all'),[reportStatus,RS]=useState('');
+
+  const notify=s=>{if(!saving.current)Toast(s)};const close=()=>{if(!saving.current)Q(null)};
+  const refresh=async()=>{const epoch=authEpoch.current;Busy(true);LoadError('');try{const state=await readWorkspace();if(epoch===authEpoch.current){D(state.db);L(state.login);}}catch(e){LoadError(connectionError(e));throw e;}finally{Busy(false);}};
+
+  useEffect(()=>{
+    let active=true;
+    const check=async()=>{try{const {data}=await sb.auth.getSession();if(active&&data.session)await refresh();}catch(e){if(active)LoadError(connectionError(e));}};
+    if(sb)check();
+    const {data:listener}=sb?.auth.onAuthStateChange(event=>{if(event==='SIGNED_OUT'){authEpoch.current++;D(blankDB());L(null);LoadError('');}})||{};
+    return()=>{active=false;listener?.subscription.unsubscribe();};
+  },[]);
+
+  useEffect(()=>{
+    window.BENOY_READY=true;
+    const tg=window.Telegram?.WebApp;
+    try{tg?.ready();tg?.expand();tg?.setHeaderColor?.('#16181d');tg?.setBackgroundColor?.('#16181d');}catch{}
+    const f=e=>{if(e.target.closest('button,a,.task,input[type=checkbox],.ring-card,.toggle-switch'))try{tg?.HapticFeedback?.impactOccurred('light')}catch{}};
+    document.addEventListener('click',f);
+    return()=>document.removeEventListener('click',f);
+  },[]);
+
+  useEffect(()=>{if(toast){let t=setTimeout(()=>Toast(''),4000);return()=>clearTimeout(t)}},[toast]);
+
+  const commit=async fn=>{if(saving.current)return;const next=fn(db),epoch=authEpoch.current;let wrote=false;saving.current=true;Busy(true);LoadError('');try{await saveWorkspace(db,next);wrote=true;Q(null);const state=await readWorkspace();if(epoch===authEpoch.current){D(state.db);L(state.login);Toast('Изменения сохранены в базе');}}catch(e){if(epoch===authEpoch.current){const message=wrote?'Изменения сохранены, но обновить список не удалось. Нажмите «Обновить данные».':connectionError(e);LoadError(message);Toast(message);}}finally{saving.current=false;Busy(false);}};
+  const updateTask=(t,patch)=>{if(!user||(!manager&&t.assignee!==user.name))return notify('Недостаточно прав');if(!manager&&Object.keys(patch).some(k=>!['status','checklist'].includes(k)))return notify('Недостаточно прав');if(!manager&&patch.status&&!['В работе','На проверке'].includes(patch.status))return notify('Недостаточно прав');commit(d=>({...d,tasks:d.tasks.map(x=>x.id===t.id?{...x,...patch}:x)}));notify('Задача обновлена')};
+
+  const allowedTasks=db.tasks.filter(t=>manager||t.assignee===user?.name);
+  const base=allowedTasks.filter(t=>(scope!=='mine'||t.assignee===user?.name)&&(!cat||(cat==='__unassigned'?!t.category:t.category===cat)));
+  
+  const filtered=base.filter(t=>{
+    if(filter==='all') return true;
+    if(filter==='active') return !overdue(t) && ['К выполнению','В работе'].includes(t.status);
+    if(filter==='review') return t.status==='На проверке';
+    if(filter==='late') return overdue(t);
+    if(filter==='done') return t.status==='Выполнена';
+    return true;
+  }).sort((a,b)=>{
+    if (a.status === 'Выполнена' && b.status === 'Выполнена') {
+      return new Date(b.completed_at || 0) - new Date(a.completed_at || 0);
+    }
+    if (a.status === 'Выполнена') return 1;
+    if (b.status === 'Выполнена') return -1;
+    return new Date(b.created_at || 0) - new Date(a.created_at || 0);
+  });
+
+  const saveTask=f=>{if(!manager)return;let old=modal?.task;const history=[...(old?.history||[])];if(old&&old.deadline!==f.deadline)history.push(audit(user,'Дедлайн изменён: '+new Date(old.deadline).toLocaleString('ru-RU')+' → '+new Date(f.deadline).toLocaleString('ru-RU')));commit(d=>({...d,tasks:old?d.tasks.map(t=>t.id===old.id?{...t,...f,history}:t):[{...f,id:uid(),status:STATES[0],created_at:iso(),completed_at:null,history:[audit(user,'Задача назначена')],rejection_reason:''},...d.tasks]}));close();notify(old?'Изменения сохранены':'Задача назначена')};
+
+  function taskCard(t){
+    const u=db.users.find(u=>u.name===t.assignee),urgent=urgency(t),checks=t.checklist||[],done=checks.filter(c=>c.done).length,canEdit=manager||(t.assignee===user?.name&&t.status!=='Выполнена');
+    return <article className="task" key={t.id}>
+      <div className="between"><span className="taskmeta">{t.task_id||'#'+t.id} <span style={{marginLeft:8,color:'var(--accent)'}}>{t.category||'Уточнить направление'}</span></span><span className={'chip '+(t.priority==='Высокий'?'coral':'')}>{t.priority==='Высокий'?'↑ Высокий':t.priority}</span></div>
+      <h3>{t.text}</h3>
+      {t.needs_object_clarification&&<div className="warnbox">⚠️ Задача требует ручного уточнения объекта (базы/отеля). Выбор объекта выполняет только владелец.</div>}
+      <div className="row wrap" style={{marginTop:12}}><span className={'chip '+statusColor(t.status)}><span className="pilldot"/>{t.status}</span>{urgent&&<span className={'chip '+urgent}>{urgent[0]}</span>}</div>
+      {t.rejection_reason&&t.status==='В работе'&&<div className="notification">На доработку: {t.rejection_reason}</div>}
+      {checks.length>0&&<div style={{marginTop:24}}><div className="between mini muted" style={{marginBottom:8}}><span className="row"><Icon name="list-checks" size={14}/>Чек-лист</span><span>{done}/{checks.length}</span></div><div className="progress"><span style={{width:100*done/checks.length+'%'}}/></div><details style={{marginTop:12}}><summary className="muted" style={{cursor:'pointer', fontSize:13}}>Показать пункты</summary>{checks.map((c,i)=><label key={c.id||i} className="checkrow"><input type="checkbox" checked={!!c.done} disabled={!canEdit} onChange={()=>updateTask(t,{checklist:checks.map((x,j)=>i===j?{...x,done:!x.done}:x)})}/><span style={{textDecoration:c.done?'line-through':'none'}}>{c.text}</span></label>)}</details></div>}
+      
+      <div className="between taskfooter" style={{alignItems:'flex-start'}}>
+        <div className="row"><span className="avatar">{initials(t.assignee)}</span><span className="assignee" style={{color:'#fff'}}>{t.assignee}</span></div>
+        <div className="stack" style={{gap:4, alignItems:'flex-end', fontSize:12, color:'var(--muted)'}}>
+          <span className="row" title="Назначено"><Icon name="clock" size={13}/> Назначено: {fmt(t.created_at)}</span>
+          <span className="row" title="Дедлайн" style={{color: t.status !== 'Выполнена' && overdue(t) ? '#ef4444' : ''}}><Icon name="calendar-days" size={13}/> Дедлайн: {fmt(t.deadline)}</span>
+          {t.status === 'Выполнена' && t.completed_at && <span className="row" style={{color: '#10b981'}} title="Завершено"><Icon name="check-circle" size={13}/> Завершено: {fmt(t.completed_at)}</span>}
+        </div>
+      </div>
+
+      <div className="taskactions">
+        {safeLink(t.attachments)&&<a className="btn" href={safeLink(t.attachments)} target="_blank" rel="noopener noreferrer"><Icon name="paperclip" size={14}/>Материалы</a>}
+        {u?.telegram?<a className="btn" href={'https://t.me/'+u.telegram.replace('@','')} target="_blank" rel="noopener noreferrer"><Icon name="send" size={14}/>Telegram</a>:<Btn icon="send" onClick={()=>notify('Telegram исполнителя ещё не указан в профиле')}>Связаться</Btn>}
+        {manager&&<Btn icon="pencil" onClick={()=>Q({type:'task',task:t})}>Изменить</Btn>}
+        {canEdit&&t.status==='К выполнению'&&<Btn onClick={()=>updateTask(t,{status:'В работе'})}>В работу</Btn>}
+        {canEdit&&t.status==='В работе'&&<Btn onClick={()=>updateTask(t,{status:'На проверке'})}>На проверку</Btn>}
+        {manager&&t.status==='На проверке'&&<><Btn kind="primary" icon="check" onClick={()=>updateTask(t,{status:'Выполнена',completed_at:iso(),rejection_reason:'',history:[...(t.history||[]),audit(user,'Результат принят')]})}>Принять</Btn><Btn onClick={()=>Q({type:'reject',task:t})}>На доработку</Btn></>}
+        {admin&&<Btn kind="danger" icon="trash-2" aria-label="Удалить задачу" onClick={()=>Q({type:'deleteTask',task:t})}/>}
+      </div>
+    </article>;
+  }
+
+  const DashboardHero = () => {
+    const total = base.length || 1;
+    const active = base.filter(t => !overdue(t) && ['К выполнению','В работе'].includes(t.status)).length;
+    const review = base.filter(t => t.status === 'На проверке').length;
+    const late = base.filter(overdue).length;
+    const done = base.filter(t => t.status === 'Выполнена').length;
+
+    const cards = [
+      { key: 'active', label: 'В работе', val: active, color: '#38bdf8' },
+      { key: 'review', label: 'На проверке', val: review, color: '#c084fc' },
+      { key: 'late', label: 'Просрочено', val: late, color: '#f87171' },
+      { key: 'done', label: 'Выполнено', val: done, color: '#34d399' }
+    ];
+
+    const dummyChartHeights = [30, 45, 60, 20, 100, 40, 80];
+
+    return (
+      <div className="dashboard-glass-panel">
+        <div className="between" style={{marginBottom: 24}}>
+          <div>
+            <h2 style={{fontSize: 26, fontWeight: 700, margin: '0 0 4px', color:'#fff'}}>Задачи и Цели</h2>
+            <p className="muted">Прогресс вашей команды</p>
+          </div>
+          {manager&&<Btn kind="primary" icon="plus" onClick={()=>Q({type:'task'})}><span className="desktop">Создать </span>задачу</Btn>}
+        </div>
+        
+        <div className="hero-dashboard">
+          <div className="hero-left">
+            <p className="muted" style={{fontSize: 13, textTransform: 'uppercase', letterSpacing: 1}}>Всего задач</p>
+            <div className="big-number">{base.length}</div>
+            <div className="chip" style={{color: '#34d399', background: 'rgba(16,185,129,0.1)', border:0, marginTop: 8}}>Выполнено {Math.round((done/total)*100)}%</div>
+          </div>
+          
+          <div className="hero-mid">
+            {dummyChartHeights.map((h, i) => (
+              <div key={i} className={`bar-fake ${i === 4 ? 'active' : ''}`} style={{height: `${h}%`}} />
+            ))}
+          </div>
+
+          <div className="hero-right stack" style={{gap: 16}}>
+            <p className="muted" style={{fontSize: 13, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 0}}>Режимы панели</p>
+            {manager && (
+              <div className="between">
+                <span style={{fontSize: 14, fontWeight: 500}}>Только мои</span>
+                <div className={`toggle-switch ${scope==='mine'?'on':''}`} onClick={()=>S(scope==='mine'?'all':'mine')}><div className="thumb"/></div>
+              </div>
+            )}
+            <div className="between">
+              <span style={{fontSize: 14, fontWeight: 500}}>Канбан-доска</span>
+              <div className={`toggle-switch ${mode==='kanban'?'on':''}`} onClick={()=>M(mode==='kanban'?'list':'kanban')}><div className="thumb"/></div>
+            </div>
+          </div>
+        </div>
+
+        <div className="stats-grid">
+          <div className={`ring-card ${filter==='all'?'selected':''}`} onClick={()=>Filter('all')}>
+            <div className="ring-wrapper" style={{'--p': '100%', '--c': '#4b5563'}}>
+              <div className="ring-inner"><Icon name="layers" size={24}/></div>
+            </div>
+            <div className="title">Все задачи</div>
+            <div className="sub">{base.length} всего</div>
+            <button className="add-btn">Показать все</button>
+          </div>
+
+          {cards.map(c => {
+            const pct = Math.round((c.val / total) * 100);
+            return (
+              <div className={`ring-card ${filter===c.key?'selected':''}`} key={c.key} onClick={()=>Filter(c.key)}>
+                <div className="ring-wrapper" style={{'--p': `${pct}%`, '--c': c.color}}>
+                  <div className="ring-inner" style={{color: c.color}}>{pct}%</div>
+                </div>
+                <div className="title">{c.label}</div>
+                <div className="sub">{c.val} задач</div>
+                <button className="add-btn">+ Фильтр</button>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+    );
+  };
+
+  const reportBase=selectReportTasks(allowedTasks,{year,month,category:cat,status:reportStatus});
+  const reportList=reportBase.filter(t=>{
+    if(filter==='all') return true;
+    if(filter==='active') return !overdue(t) && ['К выполнению','В работе'].includes(t.status);
+    if(filter==='review') return t.status==='На проверке';
+    if(filter==='late') return overdue(t);
+    if(filter==='done') return t.status==='Выполнена';
+    return true;
+  }).sort((a,b)=>{
+    if (a.status === 'Выполнена' && b.status === 'Выполнена') {
+      return new Date(b.completed_at || 0) - new Date(a.completed_at || 0);
+    }
+    if (a.status === 'Выполнена') return 1;
+    if (b.status === 'Выполнена') return -1;
+    return new Date(b.created_at || 0) - new Date(a.created_at || 0);
+  });
+
+  const ReportDashboard = () => {
+    const total = reportBase.length || 1;
+    const active = reportBase.filter(t => !overdue(t) && ['К выполнению','В работе'].includes(t.status)).length;
+    const review = reportBase.filter(t => t.status === 'На проверке').length;
+    const late = reportBase.filter(overdue).length;
+    const done = reportBase.filter(t => t.status === 'Выполнена').length;
+
+    const cards = [
+      { key: 'active', label: 'В работе', val: active, color: '#38bdf8' },
+      { key: 'review', label: 'На проверке', val: review, color: '#c084fc' },
+      { key: 'late', label: 'Просрочено', val: late, color: '#f87171' },
+      { key: 'done', label: 'Выполнено', val: done, color: '#34d399' }
+    ];
+
+    return (
+      <div className="dashboard-glass-panel">
+        <div className="between pagehead">
+          <div><h1 style={{marginBottom: 8}}>Отчёты и аналитика</h1><p className="muted">Динамика закрытия — по дате завершения.</p></div>
+          <Btn icon="download" onClick={exportCSV}>CSV / Excel</Btn>
+        </div>
+        
+        {/* Убрали фильтр по статусам */}
+        <div className="filters">
+          <Select value={year} onChange={Y} options={[{value:'all',label:'Все годы'},...Array.from(new Set([...Array.from({length:5},(_,i)=>new Date().getFullYear()+i),...db.tasks.map(t=>new Date(t.created_at).getFullYear()).filter(Number.isFinite)])).sort().map(y=>({value:String(y),label:String(y)}))]}/>
+          <Select value={month} onChange={Mo} options={[{value:'all',label:'Все месяцы'},...MONTHS.map((m,i)=>({value:String(i),label:m}))]}/>
+          <Select value={cat} onChange={Cat} options={[{value:'',label:'Все направления'},...CATS]}/>
+          <Btn onClick={()=>{Y('all');Mo('all');Cat('');Filter('all')}}>Сбросить фильтры</Btn>
+        </div>
+        
+        <p className="muted" style={{marginBottom:16}}>Отображено: <strong>{reportList.length}</strong> из <strong>{allowedTasks.length}</strong> общих задач.</p>
+        
+        {/* Блок круговых карточек для отчетов (такие же как на главной) */}
+        <div className="stats-grid">
+          <div className={`ring-card ${filter==='all'?'selected':''}`} onClick={()=>Filter('all')}>
+            <div className="ring-wrapper" style={{'--p': '100%', '--c': '#4b5563'}}>
+              <div className="ring-inner"><Icon name="layers" size={24}/></div>
+            </div>
+            <div className="title">Все задачи</div>
+            <div className="sub">{reportBase.length} в периоде</div>
+            <button className="add-btn">Показать все</button>
+          </div>
+
+          {cards.map(c => {
+            const pct = Math.round((c.val / total) * 100);
+            return (
+              <div className={`ring-card ${filter===c.key?'selected':''}`} key={c.key} onClick={()=>Filter(c.key)}>
+                <div className="ring-wrapper" style={{'--p': `${pct}%`, '--c': c.color}}>
+                  <div className="ring-inner" style={{color: c.color}}>{pct}%</div>
+                </div>
+                <div className="title">{c.label}</div>
+                <div className="sub">{c.val} задач</div>
+                <button className="add-btn">+ Фильтр</button>
+              </div>
+            )
+          })}
+        </div>
+        
+        <div className="charts" style={{marginTop: 32}}>
+          <ChartPanel title="Динамика закрытия" type="line" labels={MONTHS.map(m=>m.slice(0,3))} data={MONTHS.map((_,m)=>reportBase.filter(t=>t.status==='Выполнена'&&t.completed_at&&new Date(t.completed_at).getMonth()===m).length)}/>
+          <ChartPanel title="Нагрузка по направлениям" type="bar" labels={CATS} data={CATS.map(c=>reportBase.filter(t=>t.category===c).length)} colors="var(--accent)"/>
+          <ChartPanel title="Структура статусов" type="doughnut" labels={STATES} data={STATES.map(s=>reportBase.filter(t=>t.status===s).length)} colors={['#78716c','#0ea5e9','#8b5cf6','#10b981']}/>
+        </div>
+      </div>
+    );
+  };
+
+  const switchTab=t=>{T(t);Filter('all');Cat('');S('all');if(t==='reports'){Y('all');Mo('all');RS('');}window.scrollTo({top:0,behavior:'smooth'});};
+  const pending=db.ideas.filter(i=>i.status==='На рассмотрении').length;
+
+  if(!user) return <><Login onLogin={refresh} errorMessage={loadError} connection={()=>Q({type:'connection'})}/>{modal?.type==='connection'&&<Modal title="Подключение базы" close={close}><Connection/></Modal>}</>;
+
+  return <>
+    <header className="topbar">
+      <div className="row">
+        <img className="brand-logo" src="./assets/benoy-travel-logo.png" width="56" height="56" alt="team Benoy Travel"/>
+        <div className="brand">team <span style={{fontWeight:350}}>Benoy Travel</span><small>КОРПОРАТИВНАЯ СИСТЕМА</small></div>
+      </div>
+      <div className="row muted desktop" style={{fontSize:13}}><Icon name="calendar-days" size={15}/>{new Date().toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'})}</div>
+      <button className="profilebtn" style={{background:'none', border:0}} onClick={()=>Q({type:'profile'})}>
+        <div className="row">
+          <span className="avatar">{initials(user.name)}</span>
+          <span className="desktop stack" style={{gap:2, textAlign:'left'}}>
+            <span style={{fontSize:14, fontWeight:600, color:'#fff'}}>{user.name}</span>
+            <span className="muted" style={{fontSize:11, fontWeight:500}}>{admin?'SuperAdmin':manager?'Руководство':'Сотрудник'}</span>
+          </span>
+          <span style={{color: '#fff'}}><Icon name="chevron-down" size={16}/></span>
+        </div>
+      </button>
+    </header>
+
+    <main className="shell">
+      <div className="demo"><span>{busy?'Синхронизация…':'База Supabase подключена'}</span><button disabled={busy} onClick={()=>refresh().catch(()=>{})}>Обновить данные</button></div>
+      {loadError&&<div className="notification" role="alert">{loadError}</div>}
+
+      {/* Вкладка 1: Задачи */}
+      {tab==='tasks'&&<>
+        <DashboardHero />
+        
+        <div className="between wrap" style={{marginBottom:24}}>
+          <h3>{filter==='review'?'Задачи на утверждении':filter==='late'?'Просроченные задачи':filter==='done'?'Выполненные задачи':filter==='active'?'Задачи в работе':'Реестр задач'}<span className="muted" style={{fontSize:14, marginLeft:10, fontWeight:'normal'}}>{filtered.length} шт.</span></h3>
+          <select aria-label="Направление" className="input" style={{width:'auto',maxWidth:'100%',fontSize:13, minHeight:38, padding:'8px 12px'}} value={cat} onChange={e=>Cat(e.target.value)}>
+            <option value="">Все направления</option>
+            {CATS.map(c=><option key={c}>{c}</option>)}
+          </select>
+        </div>
+        {mode==='list'?(filtered.length?<div className="taskgrid">{filtered.map(taskCard)}</div>:<Empty>Задач по выбранным условиям нет</Empty>):<div className="kanban">{STATES.map(st=><section className="column" key={st}><div className="between columnhead"><span className={'chip '+statusColor(st)}>{st}</span><span className="muted">{filtered.filter(t=>t.status===st).length}</span></div>{filtered.filter(t=>t.status===st).map(taskCard)}{!filtered.some(t=>t.status===st)&&<Empty>Нет задач</Empty>}</section>)}</div>}
+      </>}
+
+      {/* Вкладка 2: Отчёты */}
+      {tab==='reports'&&manager&&<>
+        <ReportDashboard />
+        
+        <h2 className="sectiontitle">Реестр задач</h2>
+        {reportList.length?<div className="taskgrid">{reportList.map(taskCard)}</div>:<Empty>Нет задач для выбранного фильтра</Empty>}
+
+        <h2 className="sectiontitle" style={{marginTop:48}}>Рейтинг команды</h2>
+        <div className="tablewrap">
+          <table>
+            <thead><tr><th>Участник</th><th>Всего</th><th>Выполнено</th><th>Просрочено</th><th>KPI</th></tr></thead>
+            <tbody>
+              {assignees(db.users).map(u=>{let tasks=reportBase.filter(t=>t.assignee===u.name),done=tasks.filter(t=>t.status==='Выполнена').length;return {u,tasks,done,kpi:tasks.length?Math.round(done/tasks.length*100):0}}).sort((a,b)=>b.kpi-a.kpi||b.done-a.done).map(({u,tasks,done,kpi},i)=><tr key={u.id}>
+                <td><span className="row"><span className="muted" style={{width:18, fontWeight:700}}>{i+1}</span><span className="avatar">{initials(u.name)}</span><span style={{fontWeight:600}}>{u.name}</span></span></td>
+                <td style={{fontWeight:600}}>{tasks.length}</td><td style={{color:'#10b981', fontWeight:600}}>{done}</td><td style={{color:'#ef4444', fontWeight:600}}>{tasks.filter(overdue).length}</td><td><span className="chip emerald">{tasks.length?kpi+'%':'—'}</span></td>
+              </tr>)}
+            </tbody>
+          </table>
+        </div>
+      </>}
+
+      {/* Вкладка 3: Сезонные цели */}
+      {tab==='goals'&&<>
+        <div className="between pagehead">
+          <div><h1 style={{marginBottom: 8}}>Сезонные цели</h1><p className="muted">Общий вектор и персональный вклад.</p></div>
+          {manager&&<Btn kind="primary" icon="plus" onClick={()=>Q({type:'goal'})}>Добавить цель</Btn>}
+        </div>
+        <div className="goalgrid">
+          {db.goals.filter(g=>manager||g.target_type==='all'||g.assignee_name===user.name).map(g=><article key={g.id} className="goal glass">
+            <div className="between"><span className={'chip '+(g.target_type==='all'?'emerald':'sapphire')}><Icon name={g.target_type==='all'?'users':'user'} size={14}/>{g.target_type==='all'?'Общая цель':g.assignee_name}</span><Icon name="target" size={22}/></div>
+            <h3 style={{margin: '16px 0 8px'}}>{g.title}</h3><p className="muted" style={{fontSize:14}}>{g.description}</p>
+            <div className="between" style={{marginTop:24}}><span className="muted" style={{fontSize:13, fontWeight:600}}>Прогресс</span><span style={{color:'var(--accent)',fontSize:26, fontWeight:800}}>{g.progress}%</span></div>
+            <div className="progress" style={{margin:'8px 0'}}><span style={{width:g.progress+'%'}}/></div>
+            <div className="between" style={{marginTop:12}}><span className="muted mini">Срок: {fmt(g.deadline)}</span>{Number(g.progress)===100&&<span className="chip emerald">Достигнута</span>}</div>
+            {manager&&<div className="taskactions"><Btn icon="sliders-horizontal" onClick={()=>Q({type:'goal',goal:g})}>Изменить</Btn><Btn kind="danger" icon="trash-2" onClick={()=>Q({type:'deleteGoal',goal:g})}/></div>}
+          </article>)}
+        </div>
+      </>}
+
+      {/* Вкладка 4: Идеи и Заметки */}
+      {tab==='ideas'&&<div className="stack">
+        <div className="between pagehead">
+          <div><h1 style={{marginBottom: 8}}>Идеи и заметки</h1><p className="muted">Сохраняйте идеи для развития и личные заметки.</p></div>
+          <Btn kind="primary" icon="plus" onClick={()=>Q({type:ideaTab==='ideas'?'idea':'note'})}>{ideaTab==='ideas'?'Предложить идею':'Новая заметка'}</Btn>
+        </div>
+        <div className="row" style={{marginBottom: 16}}>
+          <Btn kind={ideaTab==='ideas'?'primary':''} onClick={()=>IT('ideas')} icon="lightbulb">Банк идей {pending>0&&<span className="badge">{pending}</span>}</Btn>
+          <Btn kind={ideaTab==='notes'?'primary':''} onClick={()=>IT('notes')} icon="notebook-pen">Личный блокнот</Btn>
+        </div>
+        {ideaTab==='ideas'?<div className="ideagrid">{db.ideas.map(i=><article className="idea glass" key={i.id}>
+          <div className="between"><span className={'chip '+(i.status==='На рассмотрении'?'amber':i.status==='Принята'?'emerald':'')}>{i.status}</span><small className="muted">{fmt(i.created_at)}</small></div>
+          <h3 style={{margin: '16px 0 8px'}}>{i.title}</h3><p style={{color:'var(--muted)', fontSize:14}}>{i.text}</p>
+          <div className="between taskfooter"><span className="row muted" style={{fontSize:13}}><span className="avatar">{initials(i.author)}</span><span style={{fontWeight:600, color:'#fff'}}>{i.author}</span></span><Btn icon="thumbs-up" kind={(i.likes||[]).includes(user.login)?'emerald':''} onClick={()=>commit(d=>({...d,ideas:d.ideas.map(x=>x.id===i.id?{...x,likes:(x.likes||[]).includes(user.login)?x.likes.filter(l=>l!==user.login):[...(x.likes||[]),user.login]}:x)}))}>{i.likes_count??(i.likes||[]).length}</Btn></div>
+          {manager&&<div className="taskactions"><Btn icon="arrow-up-right" onClick={()=>Q({type:'task',idea:i})}>В задачу</Btn><select className="input" style={{width:'auto',fontSize:13, minHeight:36, padding:'6px 12px'}} value={i.status} onChange={e=>commit(d=>({...d,ideas:d.ideas.map(x=>x.id===i.id?{...x,status:e.target.value}:x)}))}>{['На рассмотрении','Принята','Неактуальна'].map(x=><option key={x}>{x}</option>)}</select><Btn kind="danger" icon="trash-2" onClick={()=>Q({type:'deleteIdea',idea:i})}/></div>}
+        </article>)}</div>:<div className="ideagrid">{db.notes.filter(n=>n.user_login===user.login).map(n=><article className="idea glass" key={n.id}><p className="note">{n.text}</p><div className="between taskfooter"><small className="muted">{fmt(n.updated_at)}</small><div className="row"><Btn icon="pencil" onClick={()=>Q({type:'note',note:n})}/><Btn kind="danger" icon="trash-2" onClick={()=>Q({type:'deleteNote',note:n})}/></div></div></article>)}</div>}
+      </div>}
+
+      {/* Вкладка 5: Управление командой */}
+      {tab==='team'&&admin&&<>
+        <div className="between pagehead">
+          <div><h1 style={{marginBottom: 8}}>Управление командой</h1><p className="muted">Профили сотрудников, привязка Auth UID и пароли.</p></div>
+          <Btn kind="primary" icon="user-plus" onClick={()=>Q({type:'person'})}>Добавить</Btn>
+        </div>
+        <div className="tablewrap">
+          <table>
+            <thead><tr><th>Пользователь</th><th>Логин</th><th>Роль</th><th>Статус</th><th>Действия</th></tr></thead>
+            <tbody>
+              {db.users.map(u=><tr key={u.id}>
+                <td><span className="row"><span className="avatar">{initials(u.name)}</span><span><span style={{fontWeight:600}}>{u.name}</span><small className="muted" style={{display:'block'}}>{u.position}</small></span></span></td>
+                <td style={{fontWeight:600}}>{u.login}</td>
+                <td>{u.role==='employee'?'Сотрудник':u.login==='lobo'?'SuperAdmin':'Руководство'}</td>
+                <td><span className={'chip '+(u.is_active?'emerald':'coral')}>{u.is_active?'Активен':'Отключён'}</span></td>
+                <td>
+                  <div className="row">
+                    <Btn icon="pencil" onClick={()=>Q({type:'person',person:u})}>Изменить</Btn>
+                    {u.login!=='lobo'&&<Btn icon="key-round" onClick={()=>Q({type:'resetEmployeePass',person:u})}>Пароль</Btn>}
+                  </div>
+                </td>
+              </tr>)}
+            </tbody>
+          </table>
+        </div>
+      </>}
+
+      <p className="muted" style={{textAlign:'center', marginTop: 60, fontSize:13}}>team Benoy Travel · Корпоративная система команды Кавказа</p>
+    </main>
+
+    {/* Нижняя панель навигации */}
+    <nav className="bottomnav">
+      {[
+        ['tasks','Задачи','layout-grid'],
+        ...(manager?[['reports','Отчёты','chart-no-axes-combined']]:[]),
+        ['goals','Цели','target'],
+        ['ideas','Идеи','lightbulb'],
+        ...(admin?[['team','Команда','users']]:[])
+      ].map(([t,label,icon])=><button key={t} className={tab===t?'active':''} onClick={()=>switchTab(t)}><Icon name={icon} size={20}/><span className="desktop">{label}</span>{t==='ideas'&&pending>0&&<span className="badge">{pending}</span>}</button>)}
+    </nav>
+
+    {/* Модальные окна */}
+    {modal&&<Modal title={{
+      task:modal.task?'Редактировать задачу':'Назначить задачу',
+      goal:modal.goal?'Изменить цель':'Добавить цель',
+      reject:'Вернуть на доработку',
+      deleteTask:'Удалить задачу без следа?',
+      deleteGoal:'Удалить цель?',
+      deleteIdea:'Удалить идею?',
+      deleteNote:'Удалить заметку?',
+      idea:'Предложить идею',
+      note:modal.note?'Редактировать заметку':'Новая заметка',
+      profile:'Ваш профиль',
+      password:'Сменить пароль',
+      system:'Система и состояние базы данных',
+      person:modal.person?'Изменить пользователя':'Добавить пользователя',
+      resetEmployeePass:modal.person?'Смена пароля сотрудника':'Смена пароля',
+      connection:'Подключение рабочей базы'
+    }[modal.type]} close={close}>
+      {modal.type==='task'&&manager&&<TaskForm task={modal.task} idea={modal.idea} users={db.users} close={close} save={saveTask}/>}
+      {modal.type==='goal'&&manager&&<GoalForm goal={modal.goal} users={db.users} close={close} save={g=>{commit(d=>({...d,goals:modal.goal?d.goals.map(x=>x.id===modal.goal.id?{...x,...g}:x):[...d.goals,{...g,id:uid()}]}));close();notify('Цель сохранена');}}/>}
+      {modal.type==='reject'&&manager&&<TextForm label="Что нужно доработать?" close={close} button="Вернуть в работу" save={reason=>{updateTask(modal.task,{status:'В работе',completed_at:null,rejection_reason:reason,history:[...(modal.task.history||[]),audit(user,'Возврат на доработку: '+reason)]});close();}}/>}
+      {modal.type.startsWith('delete')&&<><p className="muted" style={{fontSize:14, marginBottom:20}}>Запись будет удалена без возможности восстановления.</p><div className="modalfoot"><Btn onClick={close}>Отмена</Btn><Btn kind="danger" icon="trash-2" onClick={()=>{const map={deleteTask:['tasks',modal.task,admin],deleteGoal:['goals',modal.goal,manager],deleteIdea:['ideas',modal.idea,manager],deleteNote:['notes',modal.note,modal.note?.user_login===user.login]};const [key,item,ok]=map[modal.type];if(ok)commit(d=>({...d,[key]:d[key].filter(x=>x.id!==item.id)}));close();notify(ok?'Удалено':'Недостаточно прав');}}>Удалить</Btn></div></>}
+      {modal.type==='idea'&&<IdeaForm close={close} save={f=>{commit(d=>({...d,ideas:[{...f,id:uid(),author:user.name,user_login:user.login,status:'На рассмотрении',likes:[],created_at:iso()},...d.ideas]}));close();notify('Идея отправлена');}}/>}
+      {modal.type==='note'&&<TextForm label="Личная заметка" initial={modal.note?.text||''} close={close} save={text=>{commit(d=>({...d,notes:modal.note?d.notes.map(n=>n.id===modal.note.id&&n.user_login===user.login?{...n,text,updated_at:iso()}:n):[{id:uid(),user_login:user.login,text,updated_at:iso()},...d.notes]}));close();notify('Заметка сохранена');}}/>}
+      {modal.type==='system'&&admin&&<SystemOverviewView close={close}/>}
+      
+      {modal.type==='person'&&admin&&<UserForm person={modal.person} users={db.users} close={close} save={async p=>{
+        if(modal.person && modal.person.role !== p.role){
+          try{
+            const {error}=await sb.rpc('benoy_admin_set_role',{p_user_login:p.login,p_new_role:p.role});
+            if(error) throw error;
+          }catch(err){
+            notify('Ошибка при смене роли: '+err.message);
+            return;
+          }
+        }
+        commit(d=>({...d,users:modal.person?d.users.map(u=>u.id===modal.person.id?{...u,...p}:u):[...d.users,{...p,id:uid()}],tasks:d.tasks,goals:d.goals}));
+        close();
+        notify('Профиль обновлён');
+      }}/>}
+      
+      {modal.type==='resetEmployeePass'&&admin&&<TextForm
+        label={'Новый пароль для ' + modal.person.name + ' (логин: ' + modal.person.login + ')'}
+        password
+        close={close}
+        button="Сохранить новый пароль"
+        save={async newPass=>{
+          try{
+            const {error}=await sb.rpc('benoy_admin_reset_password',{p_user_login:modal.person.login,p_new_password:newPass});
+            if(error) throw error;
+            close();
+            notify('Пароль для ' + modal.person.name + ' успешно изменён');
+          }catch(err){
+            notify(err.message||'Не удалось изменить пароль');
+          }
+        }}
+      />}
+
+      {modal.type==='profile'&&<div className="stack">
+        <div className="row" style={{marginBottom:10}}><span className="avatar" style={{width:56,height:56,fontSize:18}}>{initials(user.name)}</span><div><h3>{user.name}</h3><p className="muted" style={{fontSize:14}}>{user.login} · <span style={{fontWeight:600, color:'var(--accent)'}}>{admin?'SuperAdmin':manager?'Руководство':'Сотрудник'}</span></p></div></div>
+        {admin&&<Btn icon="users" onClick={()=>{switchTab('team');close();}}>Управление командой</Btn>}
+        {admin&&<Btn icon="server" kind="primary" onClick={()=>Q({type:'system'})}>Состояние системы и БД</Btn>}
+        <Btn icon="key-round" onClick={()=>Q({type:'password'})}>Сменить свой пароль</Btn>
+        <Btn kind="danger" icon="log-out" onClick={async()=>{await sb.auth.signOut();D(blankDB());L(null);close();}}>Выйти</Btn>
+      </div>}
+      {modal.type==='password'&&<TextForm label="Новый личный пароль" password close={close} save={async p=>{const {error}=await sb.auth.updateUser({password:p});if(error){notify(connectionError(error));return;}close();notify('Пароль изменён');}}/>}
+      {modal.type==='connection'&&<Connection/>}
+    </Modal>}
+    {toast&&<div className="toast" role="status">{toast}</div>}
+  </>;
+}
+
+function IdeaForm({save,close}){
+  const [title,T]=useState(''),[text,S]=useState('');
+  return <form className="stack" onSubmit={e=>{e.preventDefault();if(title.trim()&&text.trim())save({title:title.trim(),text:text.trim()})}}>
+    <Field label="Название"><input required className="input" value={title} onChange={e=>T(e.target.value)}/></Field>
+    <Field label="Суть идеи"><textarea required className="input" value={text} onChange={e=>S(e.target.value)}/></Field>
+    <div className="modalfoot"><Btn onClick={close}>Отмена</Btn><button className="btn primary">Предложить</button></div>
+  </form>
+}
+
+function Connection(){
+  return <div className="stack">
+    <p style={{fontSize:14, fontWeight:500}}>Система работает напрямую с базой данных Supabase (PostgreSQL).</p>
+    <p className="muted">Если данные не загружаются, убедитесь, что проект в панели Supabase переведён в статус Active (нажата кнопка Unpause).</p>
+  </div>;
+}
+
+function Login({onLogin,connection,errorMessage}){
+  const [identifier,setId]=useState('');
+  const [password,setP]=useState('');
+  const [error,setErr]=useState('');
+  const [busy,setBusy]=useState(false);
+
+  async function handleLogin(e){
+    e.preventDefault();
+    setBusy(true);
+    setErr('');
+    try{
+      if(!sb) throw Error('Клиент Supabase не инициализирован.');
+      let loginTarget=identifier.trim();
+      
+      if(!loginTarget.includes('@')){
+        try{
+          const {data:resolved}=await sb.rpc('benoy_resolve_login',{p_login:loginTarget});
+          if(resolved) loginTarget=resolved;
+          else loginTarget=loginTarget.toLowerCase()+'@benoytravel.team';
+        }catch(rpcErr){
+          loginTarget=loginTarget.toLowerCase()+'@benoytravel.team';
+        }
+      }
+
+      const {error}=await sb.auth.signInWithPassword({email:loginTarget,password});
+      if(error) throw error;
+      await onLogin();
+      setP('');
+    }catch(err){
+      setErr(err?.message?.includes('Invalid login')||err?.code==='invalid_credentials'?'Неверный логин/почта или пароль':connectionError(err));
+    }finally{
+      setBusy(false);
+    }
+  }
+
+  return <main className="login" style={{borderRadius: 32}}>
+    <div className="row" style={{marginBottom:10}}>
+      <img className="brand-logo" src="./assets/benoy-travel-logo.png" width="56" height="56" alt="team Benoy Travel"/>
+      <div className="brand">team Benoy Travel<small>КОРПОРАТИВНАЯ СИСТЕМА</small></div>
+    </div>
+    <h1>Вход в рабочее пространство</h1>
+    <p className="muted" style={{fontSize:14}}>Используйте логин сотрудника или email администратора.</p>
+    
+    <form onSubmit={handleLogin}>
+      <Field label="Логин или почта">
+        <input type="text" required autoComplete="username" className="input" placeholder="Например: iskhak или email" value={identifier} onChange={e=>setId(e.target.value)}/>
+      </Field>
+      <Field label="Пароль">
+        <input type="password" required autoComplete="current-password" className="input" placeholder="Введите пароль" value={password} onChange={e=>setP(e.target.value)}/>
+      </Field>
+      {(error||errorMessage)&&<p className="error" role="alert">{error||errorMessage}</p>}
+      <button disabled={busy} className="btn primary" style={{width:'100%',marginTop:24}}>{busy?'Проверяем…':'Войти'}</button>
+    </form>
+    <button className="btn" style={{marginTop:16,width:'100%', background:'transparent', border:0}} onClick={connection}>Статус подключения</button>
+  </main>;
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html><!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#1a1c23">
   <meta name="description" content="team Benoy Travel — корпоративная система команды. Задачи, отчёты, цели и управление.">
   <title>team Benoy Travel</title>
