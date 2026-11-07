@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#1a1512">
+  <meta name="theme-color" content="#0a0807">
   <meta name="description" content="team Benoy Travel — корпоративная система команды. Задачи, отчёты, цели и управление.">
   <title>team Benoy Travel</title>
   <link rel="icon" type="image/png" href="./assets/benoy-travel-logo.png">
@@ -18,28 +18,27 @@
   <script src="./assets/vendor/supabase-2.116.0.js"></script>
 
 <style>
-/* === V3 EXACT MATCH DARK GLASSY DASHBOARD (REFERENCE PHOTO) === */
+/* === V4 EXACT MATCH (PREMIUM DARK GLASS & HIGHLIGHTS) === */
 :root {
   color-scheme: dark;
-  --bg: #0d0a09;
-  --glass-bg: rgba(255, 255, 255, 0.04);
+  --bg: #0a0807;
+  --glass-bg: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.01) 100%);
   --glass-border: rgba(255, 255, 255, 0.08);
-  --muted: rgba(255, 255, 255, 0.5);
+  --glass-highlight: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.05) 100%);
+  --muted: rgba(255, 255, 255, 0.45);
   --text: #ffffff;
-  --accent: #ff5a36; /* Огненно-оранжевый из референса */
-  --green: #10b981;
-  --red: #ef4444;
-  --shadow: 0 40px 80px rgba(0, 0, 0, 0.5);
+  --accent: #ff5a36; /* Огненно-оранжевый */
+  --shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
 }
 
 * { box-sizing: border-box; }
 
 body {
   margin: 0;
-  /* Сложный тёмно-коричневый градиент, имитирующий фото фона */
+  /* Темный глубокий фон с имитацией свечения */
   background: 
-    radial-gradient(circle at 30% -20%, #4a3425 0%, #15110e 50%, #080605 100%),
-    #0d0a09;
+    radial-gradient(circle at 20% 0%, #3a281d 0%, #110d0a 40%, #0a0807 100%),
+    #0a0807;
   background-attachment: fixed;
   color: var(--text);
   font: 16px/1.5 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -65,31 +64,21 @@ small { font-size: 13px; }
 .wrap { flex-wrap: wrap; }
 .stack { display: flex; flex-direction: column; gap: 16px; }
 
-/* БАЗОВОЕ СТЕКЛО */
-.glass {
-  background: var(--glass-bg);
-  backdrop-filter: blur(40px);
-  -webkit-backdrop-filter: blur(40px);
-  border: 1px solid var(--glass-border);
-  box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-  border-radius: 24px;
-}
-
-/* === ЭЛЕМЕНТЫ УПРАВЛЕНИЯ === */
+/* Кнопки */
 .btn {
   display: inline-flex; justify-content: center; align-items: center; gap: 8px;
   min-height: 44px; padding: 10px 16px; border-radius: 12px;
-  background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08);
   color: #fff; font-size: 14px; font-weight: 600; transition: all .2s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.btn:hover { background: rgba(255, 255, 255, 0.1); transform: translateY(-2px); }
+.btn:hover { background: rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.15); transform: translateY(-1px); }
 .btn:active { transform: scale(.97); }
-.primary { background: var(--accent); color: #fff; border-color: transparent; }
-.primary:hover { background: #e04a29; }
+.primary { background: var(--accent); color: #fff; border-color: transparent; box-shadow: 0 4px 16px rgba(255, 90, 54, 0.3); }
+.primary:hover { background: #e04a29; border-color: transparent; }
 .danger { color: #f87171; background: rgba(239, 68, 68, 0.1); border-color: transparent; }
 .iconbtn { width: 44px; padding: 10px; }
 
-/* Теги и Аватары */
+/* Теги статусов */
 .chip { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; border-radius: 8px; padding: 4px 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.05); }
 .emerald { color: #34d399; background: rgba(16, 185, 129, 0.1); }
 .sapphire { color: #38bdf8; background: rgba(14, 165, 233, 0.1); }
@@ -103,35 +92,36 @@ small { font-size: 13px; }
 .brand { font-weight: 700; letter-spacing: -0.5px; font-size: 19px; }
 .brand small { display: block; color: var(--accent); letter-spacing: 1.5px; font-weight: 600; font-size: 10px; margin-top: 2px; }
 
-/* === ЛЕЙАУТ === */
+/* Макет */
 .topbar { border-bottom: 1px solid rgba(255,255,255,0.05); padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.2); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); }
 .shell { max-width: 1320px; margin: auto; padding: 32px 20px 120px; }
 .eyebrow { font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; font-weight: 600; }
 .pagehead { margin-bottom: 24px; }
 
-/* === ДАШБОРД (ИЗ РЕФЕРЕНСА) === */
+/* === ГЛАВНАЯ СТЕКЛЯННАЯ ПАНЕЛЬ ДАШБОРДА === */
 .dashboard-glass-panel {
-  background: rgba(255, 255, 255, 0.02);
-  backdrop-filter: blur(60px); -webkit-backdrop-filter: blur(60px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--glass-bg);
+  backdrop-filter: blur(50px); -webkit-backdrop-filter: blur(50px);
+  border: 1px solid var(--glass-border);
+  border-top: 1px solid rgba(255, 255, 255, 0.15); /* Блик на верхнем крае панели */
   border-radius: 36px; padding: 32px;
   box-shadow: var(--shadow);
   margin-bottom: 32px;
 }
 .hero-dashboard {
   display: grid; grid-template-columns: 1fr 1.5fr 1fr; gap: 24px;
-  background: rgba(255,255,255,0.03); border-radius: 28px; padding: 24px;
-  border: 1px solid rgba(255,255,255,0.05); align-items: center;
+  background: rgba(0,0,0,0.2); border-radius: 28px; padding: 24px;
+  border: 1px solid rgba(255,255,255,0.03); align-items: center;
+  box-shadow: inset 0 2px 10px rgba(0,0,0,0.2);
 }
 .hero-left .big-number { font-size: 46px; font-weight: 800; letter-spacing: -1.5px; margin: 8px 0; line-height: 1; }
 .hero-mid { display: flex; align-items: flex-end; justify-content: center; gap: 14px; height: 100px; padding: 10px; }
-.bar-fake { width: 28px; background: rgba(255,255,255,0.15); border-radius: 8px; transition: height .5s; }
-.bar-fake.active { background: var(--accent); }
+.bar-fake { width: 28px; background: rgba(255,255,255,0.1); border-radius: 8px; transition: height .5s; }
+.bar-fake.active { background: var(--accent); box-shadow: 0 0 15px rgba(255,90,54,0.4); }
 
-/* iOS-стиль тумблеры */
 .toggle-switch {
-  width: 48px; height: 26px; border-radius: 13px; background: rgba(255,255,255,0.1);
-  border: 1px solid rgba(255,255,255,0.05); position: relative; transition: .3s;
+  width: 48px; height: 26px; border-radius: 13px; background: rgba(0,0,0,0.4);
+  border: 1px solid rgba(255,255,255,0.08); position: relative; transition: .3s;
   cursor: pointer; display: flex; align-items: center; padding: 2px;
 }
 .toggle-switch.on { background: var(--accent); border-color: var(--accent); }
@@ -141,46 +131,50 @@ small { font-size: 13px; }
 }
 .toggle-switch.on .thumb { transform: translateX(22px); }
 
-/* Карточки с круговым прогрессом */
+/* === КАРТОЧКИ (СТЕКЛО И ВЫДЕЛЕНИЕ) === */
 .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 24px; }
 .ring-card {
-  background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+  background: rgba(0,0,0,0.15); /* Темное стекло в покое */
+  border: 1px solid rgba(255,255,255,0.05);
   border-radius: 24px; padding: 20px; display: flex; flex-direction: column; align-items: center;
-  cursor: pointer; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s, border-color 0.3s;
+  cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative; overflow: hidden;
 }
-/* ТОТ САМЫЙ ЭФФЕКТ FRAMER MOTION (y: -5) */
-.ring-card:hover { 
-  transform: translateY(-8px); 
-  background: rgba(255,255,255,0.06);
-  box-shadow: 0 20px 40px rgba(0,0,0,0.4); 
+.ring-card:hover { transform: translateY(-4px); background: rgba(255,255,255,0.04); }
+
+/* ТО САМОЕ СТЕКЛО ДЛЯ ВЫДЕЛЕНИЯ */
+.ring-card.selected { 
+  background: var(--glass-highlight); /* Яркая стеклянная заливка */
+  border: 1px solid rgba(255,255,255,0.2);
+  border-top: 1px solid rgba(255,255,255,0.4); /* Верхний блик на стекле */
+  box-shadow: 0 15px 35px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.2);
+  transform: translateY(-4px);
 }
-.ring-card.selected { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent) inset; }
 
 .ring-wrapper {
   width: 76px; height: 76px; border-radius: 50%;
-  background: conic-gradient(var(--c) var(--p), rgba(255,255,255,0.08) 0);
+  background: conic-gradient(var(--c) var(--p), rgba(255,255,255,0.05) 0);
   display: flex; align-items: center; justify-content: center; margin-bottom: 16px;
 }
 .ring-inner {
-  width: 60px; height: 60px; background: #1c1714; /* Цвет подложки под кольцом */
+  width: 60px; height: 60px; background: #181412; /* Темный центр */
   border-radius: 50%; display: flex; align-items: center; justify-content: center;
-  font-weight: 700; font-size: 16px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+  font-weight: 700; font-size: 16px; box-shadow: inset 0 2px 6px rgba(0,0,0,0.8);
 }
-.ring-card .title { font-weight: 600; font-size: 14px; margin-bottom: 4px; }
+.ring-card .title { font-weight: 600; font-size: 14px; margin-bottom: 4px; color: #fff; }
 .ring-card .sub { font-size: 12px; color: var(--muted); margin-bottom: 16px; }
 .add-btn {
-  width: 100%; padding: 8px; border-radius: 12px; background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1); color: #fff; font-size: 12px; font-weight: 600;
-  display: flex; align-items: center; justify-content: center; gap: 4px; transition: .2s;
+  width: 100%; padding: 8px; border-radius: 12px; background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08); color: #fff; font-size: 12px; font-weight: 600;
+  display: flex; align-items: center; justify-content: center; transition: .2s;
 }
-.ring-card:hover .add-btn { background: rgba(255,255,255,0.15); }
+.ring-card.selected .add-btn { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); }
 
-/* === ЗАДАЧИ === */
+/* Задачи */
 .taskgrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
-.task { padding: 20px; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s, border-color 0.3s; position: relative; min-width: 0; }
-.task:hover { transform: translateY(-5px); border-color: rgba(255,255,255,0.2); box-shadow: 0 16px 32px rgba(0,0,0,0.4); }
-.task h3 { margin: 12px 0 10px; line-height: 1.4; overflow-wrap: anywhere; font-weight: 600; }
+.task { background: var(--glass-bg); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); padding: 20px; border-radius: 20px; transition: all 0.3s; position: relative; }
+.task:hover { transform: translateY(-4px); background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.15); box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
+.task h3 { margin: 12px 0 10px; line-height: 1.4; font-weight: 600; }
 .taskmeta { font-size: 12px; color: var(--muted); font-weight: 500; }
 .taskfooter { border-top: 1px solid rgba(255,255,255,0.05); padding-top: 14px; margin-top: 16px; }
 .progress { height: 6px; border-radius: 10px; background: rgba(255,255,255,0.05); overflow: hidden; }
@@ -189,28 +183,33 @@ small { font-size: 13px; }
 .checkrow input { accent-color: var(--accent); margin-top: 4px; width: 16px; height: 16px; flex-shrink: 0; }
 .taskactions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
 
-/* === КАНБАН === */
+/* Канбан */
 .kanban { display: grid; grid-template-columns: repeat(4, minmax(280px, 1fr)); gap: 16px; overflow-x: auto; padding-bottom: 20px; align-items: start; }
 .column { padding: 14px; border-radius: 24px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.05); }
 .columnhead { padding: 4px 4px 16px; font-size: 14px; font-weight: 650; }
 
-/* === НИЖНЯЯ НАВИГАЦИЯ === */
-.bottomnav { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; padding: 8px; z-index: 30; background: rgba(25, 20, 18, 0.75); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; box-shadow: 0 20px 60px rgba(0,0,0,0.6); }
-.bottomnav button { position: relative; display: flex; align-items: center; gap: 8px; background: transparent; color: var(--muted); border: 0; padding: 12px 20px; border-radius: 16px; font-size: 14px; font-weight: 600; transition: all .2s; }
+/* === НИЖНЯЯ НАВИГАЦИЯ (СТЕКЛЯННАЯ ПОДЛОЖКА АКТИВНОГО ЭЛЕМЕНТА) === */
+.bottomnav { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; padding: 8px; z-index: 30; background: rgba(20, 15, 12, 0.85); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px); border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; box-shadow: 0 20px 60px rgba(0,0,0,0.6); }
+.bottomnav button { position: relative; display: flex; align-items: center; gap: 8px; background: transparent; color: var(--muted); border: 0; padding: 10px 18px; border-radius: 16px; font-size: 14px; font-weight: 600; transition: all .2s; }
 .bottomnav button:hover { color: #fff; background: rgba(255,255,255,0.05); }
-.bottomnav button.active { background: rgba(255,255,255,0.1); color: var(--accent); }
-.badge { background: var(--accent); color: #fff; font-size: 11px; min-width: 20px; height: 20px; border-radius: 10px; display: grid; place-items: center; font-weight: 700; }
+/* Стекло для выделения в навигации */
+.bottomnav button.active { 
+  background: rgba(255,255,255,0.15); /* Яркая полупрозрачная плашка */
+  color: #fff; 
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3), inset 0 1px 1px rgba(255,255,255,0.2); 
+}
+.badge { background: var(--accent); color: #fff; font-size: 11px; min-width: 20px; height: 20px; border-radius: 10px; display: grid; place-items: center; font-weight: 700; box-shadow: 0 2px 8px rgba(255,90,54,0.4); }
 
-/* === ФОРМЫ И МОДАЛКИ === */
+/* Формы, Инпуты, Модалки */
 .filters { display: flex; gap: 12px; flex-wrap: wrap; margin: 20px 0; }
 .field { display: flex; flex-direction: column; gap: 8px; font-size: 14px; min-width: 0; font-weight: 500; }
 .input { width: 100%; padding: 12px 14px; min-height: 48px; color: #fff; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; transition: all .2s; }
-.input:focus { border-color: var(--accent); background: rgba(0,0,0,0.5); }
+.input:focus { border-color: rgba(255,255,255,0.3); background: rgba(0,0,0,0.5); box-shadow: 0 0 0 4px rgba(255,255,255,0.05); }
 .input::placeholder { color: rgba(255,255,255,0.3); }
 textarea.input { min-height: 100px; resize: vertical; }
 
 .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); display: flex; align-items: center; justify-content: center; padding: 16px; z-index: 100; }
-.modal { width: 100%; max-width: 600px; max-height: 90dvh; overflow-y: auto; padding: 32px; background: #1a1614; border: 1px solid rgba(255,255,255,0.1); border-radius: 28px; box-shadow: 0 40px 100px rgba(0,0,0,0.8); }
+.modal { width: 100%; max-width: 600px; max-height: 90dvh; overflow-y: auto; padding: 32px; background: #16120f; border: 1px solid rgba(255,255,255,0.1); border-top: 1px solid rgba(255,255,255,0.2); border-radius: 28px; box-shadow: 0 40px 100px rgba(0,0,0,0.8); }
 .modalhead { margin-bottom: 24px; }
 .formgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 .span2 { grid-column: 1 / -1; }
@@ -218,26 +217,27 @@ textarea.input { min-height: 100px; resize: vertical; }
 
 /* Графики и таблицы */
 .charts { display: grid; grid-template-columns: 1.35fr 1fr 1fr; gap: 16px; }
-.chartbox { padding: 24px; min-width: 0; }
+.chartbox { background: var(--glass-bg); border: 1px solid var(--glass-border); padding: 24px; border-radius: 24px; min-width: 0; }
 .chartcanvas { height: 220px; position: relative; margin-top: 20px; }
-.tablewrap { overflow: auto; border-radius: 20px; }
+.tablewrap { overflow: auto; border-radius: 20px; background: var(--glass-bg); border: 1px solid var(--glass-border); }
 table { border-collapse: collapse; width: 100%; text-align: left; font-size: 14px; }
-th { font-size: 13px; font-weight: 600; color: var(--muted); background: rgba(255,255,255,0.03); white-space: nowrap; }
+th { font-size: 13px; font-weight: 600; color: var(--muted); background: rgba(0,0,0,0.2); white-space: nowrap; }
 td, th { padding: 16px; border-bottom: 1px solid rgba(255,255,255,0.05); }
 
 /* Остальное */
 .empty { text-align: center; padding: 48px 20px; color: var(--muted); border: 2px dashed rgba(255,255,255,0.1); border-radius: 24px; font-weight: 500; }
 .goalgrid, .ideagrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
-.goal, .idea { padding: 24px; border-radius: 24px; }
-.toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 200; max-width: 90%; padding: 14px 24px; background: #2a2420; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); font-size: 14px; font-weight: 600; color: #fff; }
+.goal, .idea { background: var(--glass-bg); border: 1px solid var(--glass-border); padding: 24px; border-radius: 24px; transition: transform .3s; }
+.goal:hover, .idea:hover { transform: translateY(-4px); background: rgba(255,255,255,0.04); }
+.toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 200; max-width: 90%; padding: 14px 24px; background: #2a2420; border: 1px solid rgba(255,255,255,0.15); border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); font-size: 14px; font-weight: 600; color: #fff; }
 
-.login { max-width: 440px; margin: 8vh auto; padding: 40px; border-top: 4px solid var(--accent); background: rgba(255,255,255,0.03); }
+.login { max-width: 440px; margin: 8vh auto; padding: 40px; border-top: 4px solid var(--accent); background: var(--glass-bg); backdrop-filter: blur(40px); border: 1px solid var(--glass-border); border-radius: 32px; box-shadow: var(--shadow); }
 .error { color: var(--red); font-size: 14px; margin-top: 12px; font-weight: 500; }
 .note { white-space: pre-wrap; overflow-wrap: anywhere; }
 .sectiontitle { margin: 32px 0 16px; font-size: 20px; font-weight: 700; }
 .notification, .warnbox { margin-top: 12px; padding: 12px 16px; font-size: 14px; font-weight: 500; border-radius: 12px; }
-.notification { background: rgba(245, 158, 11, 0.1); border-left: 3px solid #f59e0b; color: #fbbf24; }
-.warnbox { background: rgba(239, 68, 68, 0.1); border-left: 3px solid #ef4444; color: #f87171; }
+.notification { background: rgba(245, 158, 11, 0.1); border-left: 3px solid #fbbf24; color: #fcd34d; }
+.warnbox { background: rgba(239, 68, 68, 0.15); border-left: 3px solid #f87171; color: #fca5a5; }
 
 @media(max-width:1100px){
   .hero-dashboard { grid-template-columns: 1fr; }
@@ -251,7 +251,7 @@ td, th { padding: 16px; border-bottom: 1px solid rgba(255,255,255,0.05); }
   .stats-grid { gap: 12px; }
   .ring-card { padding: 16px; }
   .taskgrid,.goalgrid,.ideagrid,.charts{grid-template-columns:1fr}
-  .bottomnav{bottom:0;width:100%;border-radius:24px 24px 0 0;justify-content:space-around;padding:10px 4px calc(10px + env(safe-area-inset-bottom));gap:0; }
+  .bottomnav{bottom:0;width:100%;border-radius:24px 24px 0 0;justify-content:space-around;padding:10px 4px calc(10px + env(safe-area-inset-bottom));gap:0; background: rgba(15,12,10,0.9); }
   .bottomnav button{flex:1;flex-direction:column;gap:6px;padding:10px 4px;font-size:12px; border-radius:16px;}
   .brand-logo{width:40px;height:40px}.brand{font-size:17px}.brand small{font-size:9px}
   .kanban{grid-template-columns:repeat(4,280px)}
@@ -467,10 +467,10 @@ function ChartPanel({title,type,labels,data,colors}){
   const ref=useRef();
   useEffect(()=>{
     if(!window.Chart)return;
-    const c=new Chart(ref.current,{type,data:{labels,datasets:[{label:title,data,borderColor:type==='line'?'var(--accent)':colors,backgroundColor:type==='line'?'rgba(255,90,54,0.15)':colors,borderWidth:type==='line'?3:0,fill:type==='line',tension:.4,pointRadius:4,borderRadius:type==='bar'?8:0}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:type==='bar'?'y':'x',plugins:{legend:{display:type==='doughnut',position:'bottom',labels:{color:'rgba(255,255,255,0.7)',boxWidth:8,padding:14,font:{size:12}}}},...(type==='doughnut'?{cutout:'77%'}:{scales:{x:{grid:{display:false},ticks:{color:'rgba(255,255,255,0.5)',font:{size:11}}},y:{beginAtZero:true,grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'rgba(255,255,255,0.5)',precision:0,font:{size:11}}}}})}});
+    const c=new Chart(ref.current,{type,data:{labels,datasets:[{label:title,data,borderColor:type==='line'?'var(--accent)':colors,backgroundColor:type==='line'?'rgba(255,90,54,0.15)':colors,borderWidth:type==='line'?3:0,fill:type==='line',tension:.4,pointRadius:4,borderRadius:type==='bar'?8:0}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:type==='bar'?'y':'x',plugins:{legend:{display:type==='doughnut',position:'bottom',labels:{color:'rgba(255,255,255,0.6)',boxWidth:8,padding:14,font:{size:12}}}},...(type==='doughnut'?{cutout:'77%'}:{scales:{x:{grid:{display:false},ticks:{color:'rgba(255,255,255,0.4)',font:{size:11}}},y:{beginAtZero:true,grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'rgba(255,255,255,0.4)',precision:0,font:{size:11}}}}})}});
     return()=>c.destroy();
   },[JSON.stringify({labels,data,type})]);
-  return <div className="glass chartbox"><h3>{title}</h3>{window.Chart?<div className="chartcanvas"><canvas ref={ref}/></div>:<p className="error">Графики доступны в реестре.</p>}</div>;
+  return <div className="chartbox"><h3>{title}</h3>{window.Chart?<div className="chartcanvas"><canvas ref={ref}/></div>:<p className="error">Графики доступны в реестре.</p>}</div>;
 }
 
 function SystemOverviewView({close}){
@@ -497,7 +497,7 @@ function SystemOverviewView({close}){
       <div className="ring-card" style={{alignItems:'flex-start', padding:20}}><div className="muted" style={{fontSize:13}}>Профили</div><div style={{fontSize:24, fontWeight:700, margin:'4px 0'}}>{data.active_profiles||0}</div></div>
       <div className="ring-card" style={{alignItems:'flex-start', padding:20}}><div className="muted" style={{fontSize:13}}>Auth-аккаунты</div><div style={{fontSize:24, fontWeight:700, margin:'4px 0'}}>{data.auth_accounts||0}</div></div>
     </div>
-    <div className="glass" style={{padding:24}}>
+    <div style={{padding:24, background:'rgba(255,255,255,0.03)', borderRadius:24, border:'1px solid rgba(255,255,255,0.05)'}}>
       <h3 style={{marginBottom:14}}>Состояние таблиц</h3>
       <table style={{fontSize:13}}>
         <thead><tr><th>Таблица</th><th>Строк</th><th>Объём</th></tr></thead>
@@ -532,7 +532,7 @@ function App(){
   useEffect(()=>{
     window.BENOY_READY=true;
     const tg=window.Telegram?.WebApp;
-    try{tg?.ready();tg?.expand();tg?.setHeaderColor?.('#0d0a09');tg?.setBackgroundColor?.('#0d0a09');}catch{}
+    try{tg?.ready();tg?.expand();tg?.setHeaderColor?.('#0a0807');tg?.setBackgroundColor?.('#0a0807');}catch{}
     const f=e=>{if(e.target.closest('button,a,.task,input[type=checkbox],.ring-card,.toggle-switch'))try{tg?.HapticFeedback?.impactOccurred('light')}catch{}};
     document.addEventListener('click',f);
     return()=>document.removeEventListener('click',f);
@@ -559,14 +559,14 @@ function App(){
 
   function taskCard(t){
     const u=db.users.find(u=>u.name===t.assignee),urgent=urgency(t),checks=t.checklist||[],done=checks.filter(c=>c.done).length,canEdit=manager||(t.assignee===user?.name&&t.status!=='Выполнена');
-    return <article className="glass task" key={t.id}>
-      <div className="between"><span className="taskmeta">{t.task_id||'#'+t.id} <span style={{marginLeft:8,color:var(--accent)}}>{t.category||'Уточнить направление'}</span></span><span className={'chip '+(t.priority==='Высокий'?'coral':'')}>{t.priority==='Высокий'?'↑ Высокий':t.priority}</span></div>
+    return <article className="task" key={t.id}>
+      <div className="between"><span className="taskmeta">{t.task_id||'#'+t.id} <span style={{marginLeft:8,color:'var(--accent)'}}>{t.category||'Уточнить направление'}</span></span><span className={'chip '+(t.priority==='Высокий'?'coral':'')}>{t.priority==='Высокий'?'↑ Высокий':t.priority}</span></div>
       <h3>{t.text}</h3>
       {t.needs_object_clarification&&<div className="warnbox">⚠️ Задача требует ручного уточнения объекта (базы/отеля). Выбор объекта выполняет только владелец.</div>}
       <div className="row wrap" style={{marginTop:12}}><span className={'chip '+statusColor(t.status)}><span className="pilldot"/>{t.status}</span>{urgent&&<span className={'chip '+urgent}>{urgent[0]}</span>}</div>
       {t.rejection_reason&&t.status==='В работе'&&<div className="notification">На доработку: {t.rejection_reason}</div>}
       {checks.length>0&&<div style={{marginTop:24}}><div className="between mini muted" style={{marginBottom:8}}><span className="row"><Icon name="list-checks" size={14}/>Чек-лист</span><span>{done}/{checks.length}</span></div><div className="progress"><span style={{width:100*done/checks.length+'%'}}/></div><details style={{marginTop:12}}><summary className="muted" style={{cursor:'pointer', fontSize:13}}>Показать пункты</summary>{checks.map((c,i)=><label key={c.id||i} className="checkrow"><input type="checkbox" checked={!!c.done} disabled={!canEdit} onChange={()=>updateTask(t,{checklist:checks.map((x,j)=>i===j?{...x,done:!x.done}:x)})}/><span style={{textDecoration:c.done?'line-through':'none'}}>{c.text}</span></label>)}</details></div>}
-      <div className="between taskfooter"><div className="row"><span className="avatar">{initials(t.assignee)}</span><span className="assignee">{t.assignee}</span></div><span className="row taskmeta"><Icon name="calendar-days" size={14}/>{fmt(t.deadline)}</span></div>
+      <div className="between taskfooter"><div className="row"><span className="avatar">{initials(t.assignee)}</span><span className="assignee" style={{color:'#fff'}}>{t.assignee}</span></div><span className="row taskmeta"><Icon name="calendar-days" size={14}/>{fmt(t.deadline)}</span></div>
       <div className="taskactions">
         {safeLink(t.attachments)&&<a className="btn" href={safeLink(t.attachments)} target="_blank" rel="noopener noreferrer"><Icon name="paperclip" size={14}/>Материалы</a>}
         {u?.telegram?<a className="btn" href={'https://t.me/'+u.telegram.replace('@','')} target="_blank" rel="noopener noreferrer"><Icon name="send" size={14}/>Telegram</a>:<Btn icon="send" onClick={()=>notify('Telegram исполнителя ещё не указан в профиле')}>Связаться</Btn>}
@@ -579,7 +579,7 @@ function App(){
     </article>;
   }
 
-  // === НОВЫЙ ДАШБОРД (DashboardHero) 1 В 1 ПО РЕФЕРЕНСУ ===
+  // === ДАШБОРД (DashboardHero) ===
   const DashboardHero = () => {
     const total = base.length || 1;
     const active = base.filter(t => !overdue(t) && ['К выполнению','В работе'].includes(t.status)).length;
@@ -590,19 +590,18 @@ function App(){
     const cards = [
       { key: 'active', label: 'В работе', val: active, color: '#38bdf8' },
       { key: 'review', label: 'На проверке', val: review, color: '#c084fc' },
-      { key: 'late', label: 'Просрочено', val: late, color: '#ef4444' },
-      { key: 'done', label: 'Выполнено', val: done, color: '#10b981' }
+      { key: 'late', label: 'Просрочено', val: late, color: '#f87171' },
+      { key: 'done', label: 'Выполнено', val: done, color: '#34d399' }
     ];
 
-    // Имитация данных для центрального графика, чтобы он выглядел живо как на картинке
     const dummyChartHeights = [30, 45, 60, 20, 100, 40, 80];
 
     return (
       <div className="dashboard-glass-panel">
-        <div className="between" style={{marginBottom: 20}}>
+        <div className="between" style={{marginBottom: 24}}>
           <div>
-            <h2 style={{fontSize: 26, fontWeight: 700, margin: '0 0 4px'}}>Задачи и Цели</h2>
-            <p className="muted">Статистика в текущем пространстве</p>
+            <h2 style={{fontSize: 26, fontWeight: 700, margin: '0 0 4px', color:'#fff'}}>Задачи и Цели</h2>
+            <p className="muted">Прогресс вашей команды</p>
           </div>
           {manager&&<Btn kind="primary" icon="plus" onClick={()=>Q({type:'task'})}><span className="desktop">Создать </span>задачу</Btn>}
         </div>
@@ -611,7 +610,7 @@ function App(){
           <div className="hero-left">
             <p className="muted" style={{fontSize: 13, textTransform: 'uppercase', letterSpacing: 1}}>Всего задач</p>
             <div className="big-number">{base.length}</div>
-            <div className="chip" style={{color: '#10b981', background: 'rgba(16,185,129,0.1)', border:0, marginTop: 8}}>Выполнено {Math.round((done/total)*100)}%</div>
+            <div className="chip" style={{color: '#34d399', background: 'rgba(16,185,129,0.1)', border:0, marginTop: 8}}>Выполнено {Math.round((done/total)*100)}%</div>
           </div>
           
           <div className="hero-mid">
@@ -621,15 +620,15 @@ function App(){
           </div>
 
           <div className="hero-right stack" style={{gap: 16}}>
-            <p className="muted" style={{fontSize: 13, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 0}}>Панель управления</p>
+            <p className="muted" style={{fontSize: 13, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 0}}>Режимы панели</p>
             {manager && (
               <div className="between">
-                <span style={{fontSize: 14, fontWeight: 500}}>Мои задачи</span>
+                <span style={{fontSize: 14, fontWeight: 500}}>Только мои</span>
                 <div className={`toggle-switch ${scope==='mine'?'on':''}`} onClick={()=>S(scope==='mine'?'all':'mine')}><div className="thumb"/></div>
               </div>
             )}
             <div className="between">
-              <span style={{fontSize: 14, fontWeight: 500}}>Режим Канбан</span>
+              <span style={{fontSize: 14, fontWeight: 500}}>Канбан-доска</span>
               <div className={`toggle-switch ${mode==='kanban'?'on':''}`} onClick={()=>M(mode==='kanban'?'list':'kanban')}><div className="thumb"/></div>
             </div>
           </div>
@@ -638,7 +637,7 @@ function App(){
         <div className="stats-grid">
           <div className={`ring-card ${filter==='all'?'selected':''}`} onClick={()=>Filter('all')}>
             <div className="ring-wrapper" style={{'--p': '100%', '--c': '#4b5563'}}>
-              <div className="ring-inner" style={{color: '#fff'}}><Icon name="layers" size={24}/></div>
+              <div className="ring-inner"><Icon name="layers" size={24}/></div>
             </div>
             <div className="title">Все задачи</div>
             <div className="sub">{base.length} всего</div>
@@ -650,7 +649,7 @@ function App(){
             return (
               <div className={`ring-card ${filter===c.key?'selected':''}`} key={c.key} onClick={()=>Filter(c.key)}>
                 <div className="ring-wrapper" style={{'--p': `${pct}%`, '--c': c.color}}>
-                  <div className="ring-inner">{pct}%</div>
+                  <div className="ring-inner" style={{color: c.color}}>{pct}%</div>
                 </div>
                 <div className="title">{c.label}</div>
                 <div className="sub">{c.val} задач</div>
@@ -708,12 +707,12 @@ function App(){
       <div className="demo"><span>{busy?'Синхронизация…':'База Supabase подключена'}</span><button disabled={busy} onClick={()=>refresh().catch(()=>{})}>Обновить данные</button></div>
       {loadError&&<div className="notification" role="alert">{loadError}</div>}
 
-      {/* Вкладка 1: Задачи (НОВЫЙ ВИД ИЗ РЕФЕРЕНСА) */}
+      {/* Вкладка 1: Задачи */}
       {tab==='tasks'&&<>
         <DashboardHero />
         
         <div className="between wrap" style={{marginBottom:24}}>
-          <h3>{filter==='review'?'Задачи на утверждении':filter==='late'?'Просроченные задачи':filter==='done'?'Выполненные задачи':filter==='active'?'Задачи в работе':'Реестр задач'}<span className="muted" style={{fontSize:14, marginLeft:10, fontWeight:normal}}>{filtered.length} шт.</span></h3>
+          <h3>{filter==='review'?'Задачи на утверждении':filter==='late'?'Просроченные задачи':filter==='done'?'Выполненные задачи':filter==='active'?'Задачи в работе':'Реестр задач'}<span className="muted" style={{fontSize:14, marginLeft:10, fontWeight:'normal'}}>{filtered.length} шт.</span></h3>
           <select aria-label="Направление" className="input" style={{width:'auto',maxWidth:'100%',fontSize:13, minHeight:38, padding:'8px 12px'}} value={cat} onChange={e=>Cat(e.target.value)}>
             <option value="">Все направления</option>
             {CATS.map(c=><option key={c}>{c}</option>)}
@@ -749,7 +748,7 @@ function App(){
         {reportList.length?<div className="taskgrid">{reportList.map(taskCard)}</div>:<Empty>Нет задач для выбранного фильтра</Empty>}
 
         <h2 className="sectiontitle" style={{marginTop:48}}>Рейтинг команды</h2>
-        <div className="glass tablewrap">
+        <div className="tablewrap">
           <table>
             <thead><tr><th>Участник</th><th>Всего</th><th>Выполнено</th><th>Просрочено</th><th>KPI</th></tr></thead>
             <tbody>
@@ -769,7 +768,7 @@ function App(){
           {manager&&<Btn kind="primary" icon="plus" onClick={()=>Q({type:'goal'})}>Добавить цель</Btn>}
         </div>
         <div className="goalgrid">
-          {db.goals.filter(g=>manager||g.target_type==='all'||g.assignee_name===user.name).map(g=><article key={g.id} className="glass goal">
+          {db.goals.filter(g=>manager||g.target_type==='all'||g.assignee_name===user.name).map(g=><article key={g.id} className="goal glass">
             <div className="between"><span className={'chip '+(g.target_type==='all'?'emerald':'sapphire')}><Icon name={g.target_type==='all'?'users':'user'} size={14}/>{g.target_type==='all'?'Общая цель':g.assignee_name}</span><Icon name="target" size={22}/></div>
             <h3 style={{margin: '16px 0 8px'}}>{g.title}</h3><p className="muted" style={{fontSize:14}}>{g.description}</p>
             <div className="between" style={{marginTop:24}}><span className="muted" style={{fontSize:13, fontWeight:600}}>Прогресс</span><span style={{color:'var(--accent)',fontSize:26, fontWeight:800}}>{g.progress}%</span></div>
@@ -790,21 +789,21 @@ function App(){
           <Btn kind={ideaTab==='ideas'?'primary':''} onClick={()=>IT('ideas')} icon="lightbulb">Банк идей {pending>0&&<span className="badge">{pending}</span>}</Btn>
           <Btn kind={ideaTab==='notes'?'primary':''} onClick={()=>IT('notes')} icon="notebook-pen">Личный блокнот</Btn>
         </div>
-        {ideaTab==='ideas'?<div className="ideagrid">{db.ideas.map(i=><article className="glass idea" key={i.id}>
+        {ideaTab==='ideas'?<div className="ideagrid">{db.ideas.map(i=><article className="idea glass" key={i.id}>
           <div className="between"><span className={'chip '+(i.status==='На рассмотрении'?'amber':i.status==='Принята'?'emerald':'')}>{i.status}</span><small className="muted">{fmt(i.created_at)}</small></div>
           <h3 style={{margin: '16px 0 8px'}}>{i.title}</h3><p style={{color:'var(--muted)', fontSize:14}}>{i.text}</p>
-          <div className="between taskfooter"><span className="row muted" style={{fontSize:13}}><span className="avatar">{initials(i.author)}</span><span style={{fontWeight:600}}>{i.author}</span></span><Btn icon="thumbs-up" kind={(i.likes||[]).includes(user.login)?'emerald':''} onClick={()=>commit(d=>({...d,ideas:d.ideas.map(x=>x.id===i.id?{...x,likes:(x.likes||[]).includes(user.login)?x.likes.filter(l=>l!==user.login):[...(x.likes||[]),user.login]}:x)}))}>{i.likes_count??(i.likes||[]).length}</Btn></div>
+          <div className="between taskfooter"><span className="row muted" style={{fontSize:13}}><span className="avatar">{initials(i.author)}</span><span style={{fontWeight:600, color:'#fff'}}>{i.author}</span></span><Btn icon="thumbs-up" kind={(i.likes||[]).includes(user.login)?'emerald':''} onClick={()=>commit(d=>({...d,ideas:d.ideas.map(x=>x.id===i.id?{...x,likes:(x.likes||[]).includes(user.login)?x.likes.filter(l=>l!==user.login):[...(x.likes||[]),user.login]}:x)}))}>{i.likes_count??(i.likes||[]).length}</Btn></div>
           {manager&&<div className="taskactions"><Btn icon="arrow-up-right" onClick={()=>Q({type:'task',idea:i})}>В задачу</Btn><select className="input" style={{width:'auto',fontSize:13, minHeight:36, padding:'6px 12px'}} value={i.status} onChange={e=>commit(d=>({...d,ideas:d.ideas.map(x=>x.id===i.id?{...x,status:e.target.value}:x)}))}>{['На рассмотрении','Принята','Неактуальна'].map(x=><option key={x}>{x}</option>)}</select><Btn kind="danger" icon="trash-2" onClick={()=>Q({type:'deleteIdea',idea:i})}/></div>}
-        </article>)}</div>:<div className="ideagrid">{db.notes.filter(n=>n.user_login===user.login).map(n=><article className="glass idea" key={n.id}><p className="note">{n.text}</p><div className="between taskfooter"><small className="muted">{fmt(n.updated_at)}</small><div className="row"><Btn icon="pencil" onClick={()=>Q({type:'note',note:n})}/><Btn kind="danger" icon="trash-2" onClick={()=>Q({type:'deleteNote',note:n})}/></div></div></article>)}</div>}
+        </article>)}</div>:<div className="ideagrid">{db.notes.filter(n=>n.user_login===user.login).map(n=><article className="idea glass" key={n.id}><p className="note">{n.text}</p><div className="between taskfooter"><small className="muted">{fmt(n.updated_at)}</small><div className="row"><Btn icon="pencil" onClick={()=>Q({type:'note',note:n})}/><Btn kind="danger" icon="trash-2" onClick={()=>Q({type:'deleteNote',note:n})}/></div></div></article>)}</div>}
       </div>}
 
-      {/* Вкладка 5: Управление командой (для lobo / SuperAdmin) */}
+      {/* Вкладка 5: Управление командой */}
       {tab==='team'&&admin&&<>
         <div className="between pagehead">
           <div><h1 style={{marginBottom: 8}}>Управление командой</h1><p className="muted">Профили сотрудников, привязка Auth UID и пароли.</p></div>
           <Btn kind="primary" icon="user-plus" onClick={()=>Q({type:'person'})}>Добавить</Btn>
         </div>
-        <div className="glass tablewrap">
+        <div className="tablewrap">
           <table>
             <thead><tr><th>Пользователь</th><th>Логин</th><th>Роль</th><th>Статус</th><th>Действия</th></tr></thead>
             <tbody>
@@ -962,7 +961,7 @@ function Login({onLogin,connection,errorMessage}){
     }
   }
 
-  return <main className="glass login" style={{borderRadius: 32}}>
+  return <main className="login">
     <div className="row" style={{marginBottom:10}}>
       <img className="brand-logo" src="./assets/benoy-travel-logo.png" width="56" height="56" alt="team Benoy Travel"/>
       <div className="brand">team Benoy Travel<small>КОРПОРАТИВНАЯ СИСТЕМА</small></div>
