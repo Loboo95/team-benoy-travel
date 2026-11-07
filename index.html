@@ -259,13 +259,23 @@ function GoalForm({goal,users,save,close}){
   </form>
 }
 
+// === ИСПРАВЛЕННЫЙ КОМПОНЕНТ USER FORM ===
 function UserForm({person,users,save,close}){
   const [f,F]=useState(person?{...person}:{name:'',login:'',role:'employee',telegram:'',position:'',auth_id:'',is_active:true,is_assignee:true});
   const [err,E]=useState('');const set=(k,v)=>F(a=>({...a,[k]:v}));
+  
   return <form className="stack" onSubmit={e=>{e.preventDefault();const login=f.login.trim().toLowerCase();if(users.some(u=>u.login===login&&u.id!==person?.id)){E('Этот логин уже занят');return;}save({...f,login,name:f.name.trim(),auth_id:f.auth_id||null});}}>
     <Field label="Имя"><input required readOnly={!!person} className="input" value={f.name} onChange={e=>set('name',e.target.value)}/></Field>
     <Field label="Логин профиля"><input required readOnly={!!person} pattern="[a-zA-Z0-9_]{3,40}" className="input" value={f.login} onChange={e=>set('login',e.target.value)}/></Field>
-    <Field label="Права доступа (Роль)"><Select value={f.role} onChange={v=>set('role',v)} options={[{value:'employee',label:'Сотрудник (Доступ только к своим задачам)'},{value:'management',label:'Руководство (Все задачи, цели, приёмка)'},{value:'superadmin',label:'SuperAdmin (Полный доступ)'}]}/></Field>
+    
+    <Field label="Права доступа (Роль)">
+      <select className="input" value={f.role} onChange={e=>set('role',e.target.value)}>
+        <option value="employee">Сотрудник (Доступ только к своим задачам)</option>
+        <option value="management">Руководство (Все задачи, цели, приёмка)</option>
+        <option value="superadmin">SuperAdmin (Полный доступ)</option>
+      </select>
+    </Field>
+
     <Field label="Должность"><input className="input" value={f.position||''} onChange={e=>set('position',e.target.value)}/></Field>
     <Field label="User UID из Supabase Auth"><input readOnly={f.login==='lobo'} className="input" value={f.auth_id||''} onChange={e=>set('auth_id',e.target.value.trim())}/></Field>
     <Field label="Telegram username"><input className="input" value={f.telegram||''} onChange={e=>set('telegram',e.target.value.replace('@',''))}/></Field>
