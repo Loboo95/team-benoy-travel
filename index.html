@@ -538,6 +538,7 @@ function App(){
   const allowedTasks=db.tasks.filter(t=>manager||t.assignee===user?.name);
   const base=allowedTasks.filter(t=>(scope!=='mine'||t.assignee===user?.name)&&(!cat||(cat==='__unassigned'?!t.category:t.category===cat)));
   
+  // Улучшенная сортировка: выполненные в конец (в порядке завершения), свежие сверху
   const filtered=base.filter(t=>{
     if(filter==='all') return true;
     if(filter==='active') return !overdue(t) && ['К выполнению','В работе'].includes(t.status);
@@ -545,6 +546,13 @@ function App(){
     if(filter==='late') return overdue(t);
     if(filter==='done') return t.status==='Выполнена';
     return true;
+  }).sort((a,b)=>{
+    if (a.status === 'Выполнена' && b.status === 'Выполнена') {
+      return new Date(b.completed_at || 0) - new Date(a.completed_at || 0); 
+    }
+    if (a.status === 'Выполнена') return 1; 
+    if (b.status === 'Выполнена') return -1;
+    return new Date(b.created_at || 0) - new Date(a.created_at || 0); 
   });
 
   const saveTask=f=>{if(!manager)return;let old=modal?.task;const history=[...(old?.history||[])];if(old&&old.deadline!==f.deadline)history.push(audit(user,'Дедлайн изменён: '+new Date(old.deadline).toLocaleString('ru-RU')+' → '+new Date(f.deadline).toLocaleString('ru-RU')));commit(d=>({...d,tasks:old?d.tasks.map(t=>t.id===old.id?{...t,...f,history}:t):[{...f,id:uid(),status:STATES[0],created_at:iso(),completed_at:null,history:[audit(user,'Задача назначена')],rejection_reason:''},...d.tasks]}));close();notify(old?'Изменения сохранены':'Задача назначена')};
@@ -558,7 +566,17 @@ function App(){
       <div className="row wrap" style={{marginTop:12}}><span className={'chip '+statusColor(t.status)}><span className="pilldot"/>{t.status}</span>{urgent&&<span className={'chip '+urgent}>{urgent[0]}</span>}</div>
       {t.rejection_reason&&t.status==='В работе'&&<div className="notification">На доработку: {t.rejection_reason}</div>}
       {checks.length>0&&<div style={{marginTop:24}}><div className="between mini muted" style={{marginBottom:8}}><span className="row"><Icon name="list-checks" size={14}/>Чек-лист</span><span>{done}/{checks.length}</span></div><div className="progress"><span style={{width:100*done/checks.length+'%'}}/></div><details style={{marginTop:12}}><summary className="muted" style={{cursor:'pointer', fontSize:13}}>Показать пункты</summary>{checks.map((c,i)=><label key={c.id||i} className="checkrow"><input type="checkbox" checked={!!c.done} disabled={!canEdit} onChange={()=>updateTask(t,{checklist:checks.map((x,j)=>i===j?{...x,done:!x.done}:x)})}/><span style={{textDecoration:c.done?'line-through':'none'}}>{c.text}</span></label>)}</details></div>}
-      <div className="between taskfooter"><div className="row"><span className="avatar">{initials(t.assignee)}</span><span className="assignee" style={{color:'#fff'}}>{t.assignee}</span></div><span className="row taskmeta"><Icon name="calendar-days" size={14}/>{fmt(t.deadline)}</span></div>
+      
+      {/* ИЗМЕНЁННЫЙ ПОДВАЛ С ДАТАМИ */}
+      <div className="between taskfooter" style={{alignItems:'flex-start'}}>
+        <div className="row"><span className="avatar">{initials(t.assignee)}</span><span className="assignee" style={{color:'#fff'}}>{t.assignee}</span></div>
+        <div className="stack" style={{gap:4, alignItems:'flex-end', fontSize:12, color:'var(--muted)'}}>
+          <span className="row" title="Назначено"><Icon name="clock" size={13}/> Назначено: {fmt(t.created_at)}</span>
+          <span className="row" title="Дедлайн" style={{color: t.status !== 'Выполнена' && overdue(t) ? '#ef4444' : ''}}><Icon name="calendar-days" size={13}/> Дедлайн: {fmt(t.deadline)}</span>
+          {t.status === 'Выполнена' && t.completed_at && <span className="row" style={{color: '#10b981'}} title="Завершено"><Icon name="check-circle" size={13}/> Завершено: {fmt(t.completed_at)}</span>}
+        </div>
+      </div>
+
       <div className="taskactions">
         {safeLink(t.attachments)&&<a className="btn" href={safeLink(t.attachments)} target="_blank" rel="noopener noreferrer"><Icon name="paperclip" size={14}/>Материалы</a>}
         {u?.telegram?<a className="btn" href={'https://t.me/'+u.telegram.replace('@','')} target="_blank" rel="noopener noreferrer"><Icon name="send" size={14}/>Telegram</a>:<Btn icon="send" onClick={()=>notify('Telegram исполнителя ещё не указан в профиле')}>Связаться</Btn>}
@@ -662,6 +680,13 @@ function App(){
     if(filter==='late') return overdue(t);
     if(filter==='done') return t.status==='Выполнена';
     return true;
+  }).sort((a,b)=>{
+    if (a.status === 'Выполнена' && b.status === 'Выполнена') {
+      return new Date(b.completed_at || 0) - new Date(a.completed_at || 0);
+    }
+    if (a.status === 'Выполнена') return 1;
+    if (b.status === 'Выполнена') return -1;
+    return new Date(b.created_at || 0) - new Date(a.created_at || 0);
   });
 
   // Кнопки-статусы для вкладки "Отчеты"
@@ -979,7 +1004,7 @@ function Login({onLogin,connection,errorMessage}){
     }
   }
 
-  return <main className="login">
+  return <main className="login" style={{borderRadius: 32}}>
     <div className="row" style={{marginBottom:10}}>
       <img className="brand-logo" src="./assets/benoy-travel-logo.png" width="56" height="56" alt="team Benoy Travel"/>
       <div className="brand">team Benoy Travel<small>КОРПОРАТИВНАЯ СИСТЕМА</small></div>
