@@ -133,8 +133,6 @@ small { font-size: 13px; }
 
 /* === КАРТОЧКИ (СТЕКЛО И ВЫДЕЛЕНИЕ) === */
 .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 24px; }
-.stats-grid-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin-bottom: 24px; }
-
 .ring-card {
   background: rgba(0,0,0,0.2); 
   border: 1px solid rgba(255,255,255,0.05);
@@ -202,8 +200,8 @@ small { font-size: 13px; }
 .input::placeholder { color: rgba(255,255,255,0.3); }
 textarea.input { min-height: 100px; resize: vertical; }
 
-.overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); display: flex; align-items: center; justify-content: center; padding: 16px; z-index: 100; }
-.modal { width: 100%; max-width: 600px; max-height: 90dvh; overflow-y: auto; padding: 32px; background: #20232d; border: 1px solid rgba(255,255,255,0.1); border-top: 1px solid rgba(255,255,255,0.2); border-radius: 28px; box-shadow: 0 40px 100px rgba(0,0,0,0.8); }
+.overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; padding: 16px; z-index: 100; }
+.modal { width: 100%; max-width: 600px; max-height: 90dvh; overflow-y: auto; padding: 32px; background: #20232d; border: 1px solid rgba(255,255,255,0.1); border-top: 1px solid rgba(255,255,255,0.2); border-radius: 28px; box-shadow: 0 40px 100px rgba(0,0,0,0.6); }
 .modalhead { margin-bottom: 24px; }
 .formgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 .span2 { grid-column: 1 / -1; }
@@ -236,16 +234,14 @@ td, th { padding: 16px; border-bottom: 1px solid rgba(255,255,255,0.05); }
 @media(max-width:1100px){
   .hero-dashboard { grid-template-columns: 1fr; }
   .stats-grid { grid-template-columns: repeat(2, 1fr); }
-  .stats-grid-5 { grid-template-columns: repeat(3, 1fr); }
   .taskgrid{grid-template-columns:repeat(2,minmax(0,1fr))}
   .charts{grid-template-columns:1fr 1fr}.chartbox:first-child{grid-column:1/-1}
 }
 @media(max-width:640px){
   .shell{padding:16px 12px 115px}.topbar{padding:12px 16px}.topbar .desktop{display:none}h1{font-size:24px}
   .dashboard-glass-panel { padding: 20px; border-radius: 28px; }
-  .stats-grid, .stats-grid-5 { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .stats-grid { gap: 12px; }
   .ring-card { padding: 16px; }
-  .ring-card .title { font-size: 11px; line-height: 1.2;}
   .taskgrid,.goalgrid,.ideagrid,.charts{grid-template-columns:1fr}
   .bottomnav{bottom:0;width:100%;border-radius:24px 24px 0 0;justify-content:space-around;padding:10px 4px calc(10px + env(safe-area-inset-bottom));gap:0; background: rgba(20,22,28,0.95); }
   .bottomnav button{flex:1;flex-direction:column;gap:6px;padding:10px 4px;font-size:12px; border-radius:16px;}
@@ -385,8 +381,7 @@ function workspaceChanges(before,after){const changes=[];for(const table of ['us
 async function saveWorkspace(before,after){const changes=workspaceChanges(before,after);if(!changes.length)return;if(changes.length!==1)throw Error('Сохраните изменения одной записи за раз');const c=changes[0];let query=sb.from(c.table);if(c.action==='insert')query=query.insert(c.payload);else if(c.action==='update')query=query.update(c.payload).eq('id',c.old.id).eq('revision',c.old.revision);else query=query.delete().eq('id',c.old.id).eq('revision',c.old.revision);const {data,error}=await query.select('id');if(error)throw error;if(data?.length!==1)throw Error('Запись изменена другим пользователем или доступ ограничен. Обновите данные.');}
 
 function connectionError(e){if(['42501','PGRST204','42703','42P01'].includes(e?.code))return 'База ещё не подготовлена или доступ ограничен. Выполните SQL миграции в Supabase.';return e?.message||'Не удалось связаться с базой данных Supabase (проверьте статус проекта в панели).';}
-// Исправленная фильтрация отчетов без reportStatus
-function selectReportTasks(tasks,{year='all',month='all',category=''}={}){return tasks.filter(t=>{const date=new Date(t.created_at);return (year==='all'||date.getFullYear()===Number(year))&&(month==='all'||date.getMonth()===Number(month))&&(!category||(category==='__unassigned'?!t.category:t.category===category));});}
+function selectReportTasks(tasks,{year='all',month='all',category='',status=''}={}){return tasks.filter(t=>{const date=new Date(t.created_at);return (year==='all'||date.getFullYear()===Number(year))&&(month==='all'||date.getMonth()===Number(month))&&(!category||(category==='__unassigned'?!t.category:t.category===category))&&(!status||t.status===status);});}
 
 function Icon({name='circle',size=18}){const key=name.split('-').map(x=>x[0].toUpperCase()+x.slice(1)).join('');const icon=window.lucide?.icons?.[key];const data=icon?.[0]==='svg'?icon[2]:icon;return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{data?.map(([tag,attrs],i)=>React.createElement(tag,{...attrs,key:i}))}</svg>}
 function Btn({children,icon,onClick,kind='',...p}){return <button type="button" className={'btn '+kind} onClick={onClick} {...p}>{icon&&<Icon name={icon}/>} {children}</button>}
@@ -513,9 +508,7 @@ function App(){
   const [login,L]=useState(null);
   const user=db.users.find(u=>u.login===login&&u.is_active!==false);
   const manager=isManager(user),admin=isAdmin(user);
-  
-  // ИСПРАВЛЕНИЕ ЗДЕСЬ: мы удалили переменную RS (reportStatus), поэтому она больше не используется в стейте
-  const [tab,T]=useState('tasks'),[mode,M]=useState('list'),[scope,S]=useState('all'),[filter,Filter]=useState('all'),[cat,Cat]=useState(''),[modal,Q]=useState(null),[toast,Toast]=useState(''),[ideaTab,IT]=useState('ideas'),[year,Y]=useState('all'),[month,Mo]=useState('all');
+  const [tab,T]=useState('tasks'),[mode,M]=useState('list'),[scope,S]=useState('all'),[filter,Filter]=useState('all'),[cat,Cat]=useState(''),[modal,Q]=useState(null),[toast,Toast]=useState(''),[ideaTab,IT]=useState('ideas'),[year,Y]=useState('all'),[month,Mo]=useState('all'),[reportStatus,RS]=useState('');
 
   const notify=s=>{if(!saving.current)Toast(s)};const close=()=>{if(!saving.current)Q(null)};
   const refresh=async()=>{const epoch=authEpoch.current;Busy(true);LoadError('');try{const state=await readWorkspace();if(epoch===authEpoch.current){D(state.db);L(state.login);}}catch(e){LoadError(connectionError(e));throw e;}finally{Busy(false);}};
@@ -545,6 +538,7 @@ function App(){
   const allowedTasks=db.tasks.filter(t=>manager||t.assignee===user?.name);
   const base=allowedTasks.filter(t=>(scope!=='mine'||t.assignee===user?.name)&&(!cat||(cat==='__unassigned'?!t.category:t.category===cat)));
   
+  // Улучшенная сортировка: выполненные в конец (в порядке завершения), свежие сверху
   const filtered=base.filter(t=>{
     if(filter==='all') return true;
     if(filter==='active') return !overdue(t) && ['К выполнению','В работе'].includes(t.status);
@@ -554,11 +548,11 @@ function App(){
     return true;
   }).sort((a,b)=>{
     if (a.status === 'Выполнена' && b.status === 'Выполнена') {
-      return new Date(b.completed_at || 0) - new Date(a.completed_at || 0);
+      return new Date(b.completed_at || 0) - new Date(a.completed_at || 0); 
     }
-    if (a.status === 'Выполнена') return 1;
+    if (a.status === 'Выполнена') return 1; 
     if (b.status === 'Выполнена') return -1;
-    return new Date(b.created_at || 0) - new Date(a.created_at || 0);
+    return new Date(b.created_at || 0) - new Date(a.created_at || 0); 
   });
 
   const saveTask=f=>{if(!manager)return;let old=modal?.task;const history=[...(old?.history||[])];if(old&&old.deadline!==f.deadline)history.push(audit(user,'Дедлайн изменён: '+new Date(old.deadline).toLocaleString('ru-RU')+' → '+new Date(f.deadline).toLocaleString('ru-RU')));commit(d=>({...d,tasks:old?d.tasks.map(t=>t.id===old.id?{...t,...f,history}:t):[{...f,id:uid(),status:STATES[0],created_at:iso(),completed_at:null,history:[audit(user,'Задача назначена')],rejection_reason:''},...d.tasks]}));close();notify(old?'Изменения сохранены':'Задача назначена')};
@@ -573,6 +567,7 @@ function App(){
       {t.rejection_reason&&t.status==='В работе'&&<div className="notification">На доработку: {t.rejection_reason}</div>}
       {checks.length>0&&<div style={{marginTop:24}}><div className="between mini muted" style={{marginBottom:8}}><span className="row"><Icon name="list-checks" size={14}/>Чек-лист</span><span>{done}/{checks.length}</span></div><div className="progress"><span style={{width:100*done/checks.length+'%'}}/></div><details style={{marginTop:12}}><summary className="muted" style={{cursor:'pointer', fontSize:13}}>Показать пункты</summary>{checks.map((c,i)=><label key={c.id||i} className="checkrow"><input type="checkbox" checked={!!c.done} disabled={!canEdit} onChange={()=>updateTask(t,{checklist:checks.map((x,j)=>i===j?{...x,done:!x.done}:x)})}/><span style={{textDecoration:c.done?'line-through':'none'}}>{c.text}</span></label>)}</details></div>}
       
+      {/* ИЗМЕНЁННЫЙ ПОДВАЛ С ДАТАМИ */}
       <div className="between taskfooter" style={{alignItems:'flex-start'}}>
         <div className="row"><span className="avatar">{initials(t.assignee)}</span><span className="assignee" style={{color:'#fff'}}>{t.assignee}</span></div>
         <div className="stack" style={{gap:4, alignItems:'flex-end', fontSize:12, color:'var(--muted)'}}>
@@ -594,6 +589,7 @@ function App(){
     </article>;
   }
 
+  // === ДАШБОРД ===
   const DashboardHero = () => {
     const total = base.length || 1;
     const active = base.filter(t => !overdue(t) && ['К выполнению','В работе'].includes(t.status)).length;
@@ -653,7 +649,7 @@ function App(){
             <div className="ring-wrapper" style={{'--p': '100%', '--c': '#4b5563'}}>
               <div className="ring-inner"><Icon name="layers" size={24}/></div>
             </div>
-            <div className="title">Все задач</div>
+            <div className="title">Все задачи</div>
             <div className="sub">{base.length} всего</div>
             <button className="add-btn">Показать все</button>
           </div>
@@ -676,7 +672,7 @@ function App(){
     );
   };
 
-  const reportBase=selectReportTasks(allowedTasks,{year,month,category:cat});
+  const reportBase=selectReportTasks(allowedTasks,{year,month,category:cat,status:reportStatus});
   const reportList=reportBase.filter(t=>{
     if(filter==='all') return true;
     if(filter==='active') return !overdue(t) && ['К выполнению','В работе'].includes(t.status);
@@ -693,63 +689,38 @@ function App(){
     return new Date(b.created_at || 0) - new Date(a.created_at || 0);
   });
 
-  const ReportDashboard = () => {
-    const total = reportBase.length || 1;
-    const active = reportBase.filter(t => !overdue(t) && ['К выполнению','В работе'].includes(t.status)).length;
-    const review = reportBase.filter(t => t.status === 'На проверке').length;
-    const late = reportBase.filter(overdue).length;
-    const done = reportBase.filter(t => t.status === 'Выполнена').length;
-
-    const statsCards = [
-      { key: 'active', label: 'В работе', val: active, color: '#38bdf8' },
-      { key: 'review', label: 'На проверке', val: review, color: '#c084fc' },
-      { key: 'late', label: 'Просрочено', val: late, color: '#ef4444' },
-      { key: 'done', label: 'Выполнено', val: done, color: '#10b981' }
+  // Кнопки-статусы для вкладки "Отчеты"
+  const stats=(list)=>{
+    let n=list.length;
+    let done=list.filter(t=>t.status==='Выполнена').length;
+    let review=list.filter(t=>t.status==='На проверке').length;
+    let late=list.filter(overdue).length;
+    let active=list.filter(t=>!overdue(t)&&['К выполнению','В работе'].includes(t.status)).length;
+    return [
+      {key:'all',label:'Всего задач',value:n,sub:'В периоде',icon:'layers',color:'#78716c'},
+      {key:'active',label:'В работе',value:active,sub:'По графику',icon:'activity',color:'var(--accent)'},
+      {key:'review',label:'На утверждении',value:review,sub:'Ждут приёмки',icon:'clock',color:'#8b5cf6'},
+      {key:'late',label:'Просрочено',value:late,sub:'Требуют внимания',icon:'triangle-alert',color:'#ef4444'},
+      {key:'done',label:'Выполнено',value:done,sub:(n?Math.round(done/n*100):0)+'%',icon:'circle-check',color:'#10b981'}
     ];
-
-    return (
-      <div className="dashboard-glass-panel">
-        <div className="between pagehead">
-          <div><h1 style={{marginBottom: 8}}>Отчёты и аналитика</h1><p className="muted">Динамика закрытия — по дате завершения.</p></div>
-          <Btn icon="download" onClick={exportCSV}>CSV / Excel</Btn>
-        </div>
-        
-        <div className="filters">
-          <Select value={year} onChange={Y} options={[{value:'all',label:'Все годы'},...Array.from(new Set([...Array.from({length:5},(_,i)=>new Date().getFullYear()+i),...db.tasks.map(t=>new Date(t.created_at).getFullYear()).filter(Number.isFinite)])).sort().map(y=>({value:String(y),label:String(y)}))]}/>
-          <Select value={month} onChange={Mo} options={[{value:'all',label:'Все месяцы'},...MONTHS.map((m,i)=>({value:String(i),label:m}))]}/>
-          <Select value={cat} onChange={Cat} options={[{value:'',label:'Все направления'},...CATS]}/>
-          <Btn onClick={()=>{Y('all');Mo('all');Cat('');Filter('all')}}>Сбросить фильтры</Btn>
-        </div>
-        
-        <p className="muted" style={{marginBottom:16}}>Отображено: <strong>{reportList.length}</strong> из <strong>{allowedTasks.length}</strong> общих задач.</p>
-        
-        <div className="stats-grid-5">
-          <button className={`ring-card ${filter==='all'?'selected':''}`} onClick={()=>Filter('all')} style={{padding: '16px 12px'}}>
-            <div className="title" style={{fontSize:13}}>Всего задач</div>
-            <div style={{fontSize: 24, fontWeight: 700, margin: '8px 0', color:'#fff'}}>{reportBase.length.toString().padStart(2,'0')}</div>
-            <div className="row" style={{color: '#78716c', fontSize:12, fontWeight:600}}><Icon name="layers" size={14}/><span>В периоде</span></div>
-          </button>
-
-          {statsCards.map(s => (
-            <button className={`ring-card ${filter===s.key?'selected':''}`} key={s.key} onClick={()=>Filter(s.key)} style={{padding: '16px 12px'}}>
-              <div className="title" style={{fontSize:13}}>{s.label}</div>
-              <div style={{fontSize: 24, fontWeight: 700, margin: '8px 0', color: s.key==='late'&&s.val?'#ef4444':s.key==='review'&&s.val?'#8b5cf6':'#fff'}}>{s.val.toString().padStart(2,'0')}</div>
-              <div className="row" style={{color: s.color, fontSize:12, fontWeight:600}}><Icon name={s.key==='late'?'triangle-alert':s.key==='done'?'circle-check':s.key==='review'?'clock':'activity'} size={14}/><span>{s.key==='late'?'Внимание':s.key==='done'?Math.round(s.val/total*100)+'%':'Фильтр'}</span></div>
-            </button>
-          ))}
-        </div>
-        
-        <div className="charts" style={{marginTop: 32}}>
-          <ChartPanel title="Динамика закрытия" type="line" labels={MONTHS.map(m=>m.slice(0,3))} data={MONTHS.map((_,m)=>reportBase.filter(t=>t.status==='Выполнена'&&t.completed_at&&new Date(t.completed_at).getMonth()===m).length)}/>
-          <ChartPanel title="Нагрузка по направлениям" type="bar" labels={CATS} data={CATS.map(c=>reportBase.filter(t=>t.category===c).length)} colors="var(--accent)"/>
-          <ChartPanel title="Структура статусов" type="doughnut" labels={STATES} data={STATES.map(s=>reportBase.filter(t=>t.status===s).length)} colors={['#78716c','#0ea5e9','#8b5cf6','#10b981']}/>
-        </div>
-      </div>
-    );
   };
 
-  // ИСПРАВЛЕНИЕ: при переходе на отчеты мы больше не пытаемся сбросить удаленную переменную RS
-  const switchTab=t=>{T(t);Filter('all');Cat('');S('all');if(t==='reports'){Y('all');Mo('all');}window.scrollTo({top:0,behavior:'smooth'});};
+  const kpis=list=><div className="stats-grid" style={{gridTemplateColumns:'repeat(5,1fr)', gap: 12, marginBottom: 24}}>
+    {stats(list).map(s=><button className={`ring-card ${filter===s.key?'selected':''}`} key={s.key} onClick={()=>Filter(s.key)} style={{padding: '16px 12px'}}>
+      <div className="title" style={{fontSize:13}}>{s.label}</div>
+      <div style={{fontSize: 24, fontWeight: 700, margin: '8px 0', color: s.key==='late'&&s.value?'#ef4444':s.key==='review'&&s.value?'#8b5cf6':'#fff'}}>{s.value.toString().padStart(2,'0')}</div>
+      <div className="row" style={{color: s.color, fontSize:12, fontWeight:600}}><Icon name={s.icon} size={14}/><span>{s.sub}</span></div>
+    </button>)}
+  </div>;
+
+  function exportCSV(){
+    const esc=v=>'"'+String(v??'').replace(/^[=+\-@\t\r]/,"'$&").replaceAll('"','""')+'"';
+    const rows=[['ID','Задача','Исполнитель','Направление','Статус','Дедлайн','Приоритет','Выполнено'],...reportList.map(t=>[t.id,t.text,t.assignee,t.category,t.status,t.deadline,t.priority,t.completed_at])];
+    const b=new Blob(['\uFEFF'+rows.map(r=>r.map(esc).join(';')).join('\r\n')],{type:'text/csv;charset=utf-8'});
+    const url=URL.createObjectURL(b);const a=document.createElement('a');a.href=url;a.download='team-Benoy-Travel-'+new Date().toISOString().slice(0,10)+'.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);notify('CSV скачан');
+  }
+
+  const switchTab=t=>{T(t);Filter('all');Cat('');S('all');if(t==='reports'){Y('all');Mo('all');RS('');}window.scrollTo({top:0,behavior:'smooth'});};
   const pending=db.ideas.filter(i=>i.status==='На рассмотрении').length;
 
   if(!user) return <><Login onLogin={refresh} errorMessage={loadError} connection={()=>Q({type:'connection'})}/>{modal?.type==='connection'&&<Modal title="Подключение базы" close={close}><Connection/></Modal>}</>;
@@ -793,7 +764,28 @@ function App(){
 
       {/* Вкладка 2: Отчёты */}
       {tab==='reports'&&manager&&<>
-        <ReportDashboard />
+        <div className="dashboard-glass-panel">
+          <div className="between pagehead">
+            <div><h1 style={{marginBottom: 8}}>Отчёты и аналитика</h1><p className="muted">Динамика закрытия — по дате завершения.</p></div>
+            <Btn icon="download" onClick={exportCSV}>CSV / Excel</Btn>
+          </div>
+          <div className="filters">
+            <Select value={year} onChange={Y} options={[{value:'all',label:'Все годы'},...Array.from(new Set([...Array.from({length:5},(_,i)=>new Date().getFullYear()+i),...db.tasks.map(t=>new Date(t.created_at).getFullYear()).filter(Number.isFinite)])).sort().map(y=>({value:String(y),label:String(y)}))]}/>
+            <Select value={month} onChange={Mo} options={[{value:'all',label:'Все месяцы'},...MONTHS.map((m,i)=>({value:String(i),label:m}))]}/>
+            <Select value={cat} onChange={Cat} options={[{value:'',label:'Все направления'},...CATS]}/>
+            <Select value={reportStatus} onChange={RS} options={[{value:'',label:'Все статусы'},...STATES]}/>
+            <Btn onClick={()=>{Y('all');Mo('all');RS('');Cat('');Filter('all')}}>Сбросить фильтры</Btn>
+          </div>
+          
+          <p className="muted" style={{marginBottom:16}}>Отображено: <strong>{reportList.length}</strong> из <strong>{allowedTasks.length}</strong> общих задач.</p>
+          {kpis(reportBase)}
+          
+          <div className="charts">
+            <ChartPanel title="Динамика закрытия" type="line" labels={MONTHS.map(m=>m.slice(0,3))} data={MONTHS.map((_,m)=>reportBase.filter(t=>t.status==='Выполнена'&&t.completed_at&&new Date(t.completed_at).getMonth()===m).length)}/>
+            <ChartPanel title="Нагрузка по направлениям" type="bar" labels={CATS} data={CATS.map(c=>reportBase.filter(t=>t.category===c).length)} colors="var(--accent)"/>
+            <ChartPanel title="Структура статусов" type="doughnut" labels={STATES} data={STATES.map(s=>reportBase.filter(t=>t.status===s).length)} colors={['#78716c','#0ea5e9','#8b5cf6','#10b981']}/>
+          </div>
+        </div>
         
         <h2 className="sectiontitle">Реестр задач</h2>
         {reportList.length?<div className="taskgrid">{reportList.map(taskCard)}</div>:<Empty>Нет задач для выбранного фильтра</Empty>}
@@ -843,7 +835,7 @@ function App(){
         {ideaTab==='ideas'?<div className="ideagrid">{db.ideas.map(i=><article className="idea glass" key={i.id}>
           <div className="between"><span className={'chip '+(i.status==='На рассмотрении'?'amber':i.status==='Принята'?'emerald':'')}>{i.status}</span><small className="muted">{fmt(i.created_at)}</small></div>
           <h3 style={{margin: '16px 0 8px'}}>{i.title}</h3><p style={{color:'var(--muted)', fontSize:14}}>{i.text}</p>
-          <div className="between taskfooter"><span className="row muted" style={{fontSize:13}}><span className="avatar">{initials(i.author)}</span><span style={{fontWeight:600, color:'#fff'}}>{i.author}</span></span><Btn icon="thumbs-up" kind={(i.likes||[]).includes(user.login)?'emerald':''} onClick={()=>commit(d=>({...d,ideas:d.ideas.map(x=>x.id===i.id?{...x,status:e.target.value}:x)}))}>{i.likes_count??(i.likes||[]).length}</Btn></div>
+          <div className="between taskfooter"><span className="row muted" style={{fontSize:13}}><span className="avatar">{initials(i.author)}</span><span style={{fontWeight:600, color:'#fff'}}>{i.author}</span></span><Btn icon="thumbs-up" kind={(i.likes||[]).includes(user.login)?'emerald':''} onClick={()=>commit(d=>({...d,ideas:d.ideas.map(x=>x.id===i.id?{...x,likes:(x.likes||[]).includes(user.login)?x.likes.filter(l=>l!==user.login):[...(x.likes||[]),user.login]}:x)}))}>{i.likes_count??(i.likes||[]).length}</Btn></div>
           {manager&&<div className="taskactions"><Btn icon="arrow-up-right" onClick={()=>Q({type:'task',idea:i})}>В задачу</Btn><select className="input" style={{width:'auto',fontSize:13, minHeight:36, padding:'6px 12px'}} value={i.status} onChange={e=>commit(d=>({...d,ideas:d.ideas.map(x=>x.id===i.id?{...x,status:e.target.value}:x)}))}>{['На рассмотрении','Принята','Неактуальна'].map(x=><option key={x}>{x}</option>)}</select><Btn kind="danger" icon="trash-2" onClick={()=>Q({type:'deleteIdea',idea:i})}/></div>}
         </article>)}</div>:<div className="ideagrid">{db.notes.filter(n=>n.user_login===user.login).map(n=><article className="idea glass" key={n.id}><p className="note">{n.text}</p><div className="between taskfooter"><small className="muted">{fmt(n.updated_at)}</small><div className="row"><Btn icon="pencil" onClick={()=>Q({type:'note',note:n})}/><Btn kind="danger" icon="trash-2" onClick={()=>Q({type:'deleteNote',note:n})}/></div></div></article>)}</div>}
       </div>}
