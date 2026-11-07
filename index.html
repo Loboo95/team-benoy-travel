@@ -208,8 +208,9 @@ function databasePatch(table,old,next){
   }else if(table==='notes'){
     put('content',next.text,'text');if(!old){out.title=next.text.slice(0,80)||'Заметка';out.user_login=next.user_login;}
   }else if(table==='users'){
-    for(const k of ['role','is_active','auth_id','telegram','position','is_assignee'])put(k,next[k]??(k==='auth_id'?null:''));
-    if(!old){out.login=next.login;out.name=next.name;}
+    // ИСПРАВЛЕНИЕ ЗДЕСЬ: Мы исключили 'role' из массива, чтобы база не отклоняла запрос
+    for(const k of ['is_active','auth_id','telegram','position','is_assignee'])put(k,next[k]??(k==='auth_id'?null:''));
+    if(!old){out.login=next.login;out.name=next.name;out.role=next.role;} // Для новых пользователей оставляем
   }
   return out;
 }
@@ -259,7 +260,6 @@ function GoalForm({goal,users,save,close}){
   </form>
 }
 
-// === ИСПРАВЛЕННЫЙ КОМПОНЕНТ USER FORM ===
 function UserForm({person,users,save,close}){
   const [f,F]=useState(person?{...person}:{name:'',login:'',role:'employee',telegram:'',position:'',auth_id:'',is_active:true,is_assignee:true});
   const [err,E]=useState('');const set=(k,v)=>F(a=>({...a,[k]:v}));
@@ -634,6 +634,7 @@ function App(){
       
       {/* Форма изменения профиля пользователя (Интеграция RPC для смены роли) */}
       {modal.type==='person'&&admin&&<UserForm person={modal.person} users={db.users} close={close} save={async p=>{
+        // 1. Сначала меняем роль через безопасный админский SQL-метод
         if(modal.person && modal.person.role !== p.role){
           try{
             const {error}=await sb.rpc('benoy_admin_set_role',{p_user_login:p.login,p_new_role:p.role});
@@ -643,6 +644,7 @@ function App(){
             return;
           }
         }
+        // 2. Обновляем остальные данные профиля. Роль сюда не попадет, мы убрали ее из databasePatch.
         commit(d=>({...d,users:modal.person?d.users.map(u=>u.id===modal.person.id?{...u,...p}:u):[...d.users,{...p,id:uid()}],tasks:d.tasks,goals:d.goals}));
         close();
         notify('Профиль обновлён');
