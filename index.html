@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#e6ded5">
+  <meta name="theme-color" content="#1a1512">
   <meta name="description" content="team Benoy Travel — корпоративная система команды. Задачи, отчёты, цели и управление.">
   <title>team Benoy Travel</title>
   <link rel="icon" type="image/png" href="./assets/benoy-travel-logo.png">
@@ -18,30 +18,28 @@
   <script src="./assets/vendor/supabase-2.116.0.js"></script>
 
 <style>
-/* === V2 LIGHT GLASSY DASHBOARD THEME === */
+/* === V3 EXACT MATCH DARK GLASSY DASHBOARD (REFERENCE PHOTO) === */
 :root {
-  color-scheme: light;
-  --bg: #e6ded5;
-  --glass: rgba(255, 255, 255, 0.45);
-  --line: rgba(255, 255, 255, 0.7);
-  --muted: #78716c; /* Тёплый серый для подписей */
-  --text: #1c1917; /* Почти чёрный для заголовков */
-  --accent: #ea580c; /* Оранжевый акцент из референса */
+  color-scheme: dark;
+  --bg: #0d0a09;
+  --glass-bg: rgba(255, 255, 255, 0.04);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --muted: rgba(255, 255, 255, 0.5);
+  --text: #ffffff;
+  --accent: #ff5a36; /* Огненно-оранжевый из референса */
   --green: #10b981;
-  --blue: #0ea5e9;
   --red: #ef4444;
-  --shadow: 0 16px 40px rgba(130, 110, 90, 0.15);
+  --shadow: 0 40px 80px rgba(0, 0, 0, 0.5);
 }
 
 * { box-sizing: border-box; }
 
 body {
   margin: 0;
-  /* Тёплый размытый градиент фона */
+  /* Сложный тёмно-коричневый градиент, имитирующий фото фона */
   background: 
-    radial-gradient(circle at 10% 0%, #fdfbf7 0%, transparent 40%),
-    radial-gradient(circle at 90% 80%, #d4c5b9 0%, transparent 50%),
-    #e8dfd5;
+    radial-gradient(circle at 30% -20%, #4a3425 0%, #15110e 50%, #080605 100%),
+    #0d0a09;
   background-attachment: fixed;
   color: var(--text);
   font: 16px/1.5 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -61,123 +59,162 @@ h1 { font-size: 30px; font-weight: 700; letter-spacing: -1px; }
 h2 { font-size: 22px; font-weight: 650; letter-spacing: -0.5px; }
 h3 { font-size: 17px; font-weight: 600; }
 small { font-size: 13px; }
-
-/* Основа эффекта матового стекла */
-.glass {
-  background: var(--glass);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid var(--line);
-  box-shadow: var(--shadow);
-  border-radius: 20px;
-}
-
 .muted { color: var(--muted); }
 .row { display: flex; align-items: center; gap: 10px; }
 .between { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
 .wrap { flex-wrap: wrap; }
 .stack { display: flex; flex-direction: column; gap: 16px; }
 
-/* Кнопки */
+/* БАЗОВОЕ СТЕКЛО */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+  border-radius: 24px;
+}
+
+/* === ЭЛЕМЕНТЫ УПРАВЛЕНИЯ === */
 .btn {
   display: inline-flex; justify-content: center; align-items: center; gap: 8px;
-  min-height: 44px; padding: 10px 16px;
-  border: 1px solid var(--line); border-radius: 14px;
-  background: rgba(255, 255, 255, 0.4); color: var(--text);
-  font-size: 14px; font-weight: 600; transition: all .2s;
+  min-height: 44px; padding: 10px 16px; border-radius: 12px;
+  background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff; font-size: 14px; font-weight: 600; transition: all .2s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.btn:hover { background: rgba(255, 255, 255, 0.7); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+.btn:hover { background: rgba(255, 255, 255, 0.1); transform: translateY(-2px); }
 .btn:active { transform: scale(.97); }
-.primary {
-  background: var(--accent); color: #fff; border-color: transparent;
-  box-shadow: 0 6px 20px rgba(234, 88, 12, 0.3);
-}
-.primary:hover { background: #c2410c; color: #fff; border-color: transparent; }
-.danger { color: var(--red); background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.2); }
+.primary { background: var(--accent); color: #fff; border-color: transparent; }
+.primary:hover { background: #e04a29; }
+.danger { color: #f87171; background: rgba(239, 68, 68, 0.1); border-color: transparent; }
 .iconbtn { width: 44px; padding: 10px; }
 
-/* Цветные теги статусов */
-.chip { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 500; border-radius: 8px; padding: 4px 10px; background: rgba(255,255,255,0.6); border: 1px solid var(--line); }
-.emerald { color: #047857; background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.3); }
-.sapphire { color: #0369a1; background: rgba(14, 165, 233, 0.15); border-color: rgba(14, 165, 233, 0.3); }
-.amber { color: #b45309; background: rgba(245, 158, 11, 0.15); border-color: rgba(245, 158, 11, 0.3); }
-.coral { color: #be123c; background: rgba(244, 63, 94, 0.15); border-color: rgba(244, 63, 94, 0.3); }
-.violet { color: #5b21b6; background: rgba(139, 92, 246, 0.15); border-color: rgba(139, 92, 246, 0.3); }
+/* Теги и Аватары */
+.chip { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; border-radius: 8px; padding: 4px 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.05); }
+.emerald { color: #34d399; background: rgba(16, 185, 129, 0.1); }
+.sapphire { color: #38bdf8; background: rgba(14, 165, 233, 0.1); }
+.amber { color: #fbbf24; background: rgba(245, 158, 11, 0.1); }
+.coral { color: #fb7185; background: rgba(244, 63, 94, 0.1); }
+.violet { color: #c084fc; background: rgba(139, 92, 246, 0.1); }
 .pilldot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
 
-/* Аватарки и Лого */
-.avatar { flex-shrink: 0; width: 36px; height: 36px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background: #e7e5e4; border: 2px solid #fff; color: var(--text); font-size: 13px; font-weight: 650; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-.brand-logo { width: 50px; height: 50px; object-fit: contain; border-radius: 50%; background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+.avatar { flex-shrink: 0; width: 36px; height: 36px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background: #2a2420; border: 1px solid rgba(255,255,255,0.1); color: #fff; font-size: 13px; font-weight: 650; }
+.brand-logo { width: 50px; height: 50px; object-fit: contain; border-radius: 50%; background: #fff; }
 .brand { font-weight: 700; letter-spacing: -0.5px; font-size: 19px; }
 .brand small { display: block; color: var(--accent); letter-spacing: 1.5px; font-weight: 600; font-size: 10px; margin-top: 2px; }
 
-/* Структура интерфейса */
-.topbar { border-bottom: 1px solid var(--line); padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.3); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); }
+/* === ЛЕЙАУТ === */
+.topbar { border-bottom: 1px solid rgba(255,255,255,0.05); padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.2); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); }
 .shell { max-width: 1320px; margin: auto; padding: 32px 20px 120px; }
-.eyebrow { font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; font-weight: 600; }
-.subtitle { color: var(--muted); font-size: 14px; margin-top: 4px; }
-.demo { border: 1px solid rgba(234, 88, 12, 0.3); background: rgba(234, 88, 12, 0.05); color: #c2410c; border-radius: 12px; padding: 10px 16px; font-size: 13px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; font-weight: 500; }
-.demo button { color: #9a3412; background: none; border: 0; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
-.pagehead { margin-bottom: 20px; }
+.eyebrow { font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; font-weight: 600; }
+.pagehead { margin-bottom: 24px; }
 
-/* КАРТОЧКИ СТАТИСТИКИ V2 */
-.stats { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px; margin: 24px 0; }
-.stat {
-  text-align: left; padding: 24px; border-radius: 24px; color: var(--text); background: var(--glass);
-  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--line);
-  box-shadow: 0 8px 32px rgba(100, 80, 60, 0.08); display: flex; flex-direction: column; gap: 8px;
-  position: relative; overflow: hidden; transition: transform .3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow .3s, border-color .3s;
+/* === ДАШБОРД (ИЗ РЕФЕРЕНСА) === */
+.dashboard-glass-panel {
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(60px); -webkit-backdrop-filter: blur(60px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 36px; padding: 32px;
+  box-shadow: var(--shadow);
+  margin-bottom: 32px;
 }
-.stat::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, #fff, transparent); opacity: 0.5; }
-.stat:hover { transform: translateY(-6px); box-shadow: 0 20px 40px rgba(100, 80, 60, 0.15); border-color: #fff; }
-.stat.selected { box-shadow: 0 0 0 2px var(--accent), 0 14px 40px rgba(100, 80, 60, 0.1); border-color: transparent; }
-.stat .top-row { display: flex; justify-content: space-between; align-items: center; width: 100%; }
-.stat .label { font-size: 14px; color: var(--muted); font-weight: 500; }
-.stat .icon-box { background: #fff; padding: 8px; border-radius: 14px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
-.stat .value { font-size: 34px; line-height: 1.1; font-weight: 800; letter-spacing: -1px; margin: 8px 0; color: var(--text); }
-.stat .trend { display: flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 600; }
+.hero-dashboard {
+  display: grid; grid-template-columns: 1fr 1.5fr 1fr; gap: 24px;
+  background: rgba(255,255,255,0.03); border-radius: 28px; padding: 24px;
+  border: 1px solid rgba(255,255,255,0.05); align-items: center;
+}
+.hero-left .big-number { font-size: 46px; font-weight: 800; letter-spacing: -1.5px; margin: 8px 0; line-height: 1; }
+.hero-mid { display: flex; align-items: flex-end; justify-content: center; gap: 14px; height: 100px; padding: 10px; }
+.bar-fake { width: 28px; background: rgba(255,255,255,0.15); border-radius: 8px; transition: height .5s; }
+.bar-fake.active { background: var(--accent); }
 
-/* Панель переключателей */
-.toolbar { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 24px; }
-.segment { display: inline-flex; gap: 4px; background: rgba(255,255,255,0.4); border: 1px solid var(--line); padding: 4px; border-radius: 14px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); }
-.segment button { border: 0; background: transparent; color: var(--muted); padding: 8px 16px; border-radius: 10px; font-size: 14px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 7px; min-height: 40px; transition: all .2s; }
-.segment button.active { color: var(--text); background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+/* iOS-стиль тумблеры */
+.toggle-switch {
+  width: 48px; height: 26px; border-radius: 13px; background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.05); position: relative; transition: .3s;
+  cursor: pointer; display: flex; align-items: center; padding: 2px;
+}
+.toggle-switch.on { background: var(--accent); border-color: var(--accent); }
+.toggle-switch .thumb {
+  width: 20px; height: 20px; background: #fff; border-radius: 50%;
+  transition: .3s cubic-bezier(0.4, 0, 0.2, 1); transform: translateX(0); box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+.toggle-switch.on .thumb { transform: translateX(22px); }
 
-/* Задачи */
+/* Карточки с круговым прогрессом */
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 24px; }
+.ring-card {
+  background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 24px; padding: 20px; display: flex; flex-direction: column; align-items: center;
+  cursor: pointer; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s, border-color 0.3s;
+  position: relative; overflow: hidden;
+}
+/* ТОТ САМЫЙ ЭФФЕКТ FRAMER MOTION (y: -5) */
+.ring-card:hover { 
+  transform: translateY(-8px); 
+  background: rgba(255,255,255,0.06);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4); 
+}
+.ring-card.selected { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent) inset; }
+
+.ring-wrapper {
+  width: 76px; height: 76px; border-radius: 50%;
+  background: conic-gradient(var(--c) var(--p), rgba(255,255,255,0.08) 0);
+  display: flex; align-items: center; justify-content: center; margin-bottom: 16px;
+}
+.ring-inner {
+  width: 60px; height: 60px; background: #1c1714; /* Цвет подложки под кольцом */
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 16px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+}
+.ring-card .title { font-weight: 600; font-size: 14px; margin-bottom: 4px; }
+.ring-card .sub { font-size: 12px; color: var(--muted); margin-bottom: 16px; }
+.add-btn {
+  width: 100%; padding: 8px; border-radius: 12px; background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1); color: #fff; font-size: 12px; font-weight: 600;
+  display: flex; align-items: center; justify-content: center; gap: 4px; transition: .2s;
+}
+.ring-card:hover .add-btn { background: rgba(255,255,255,0.15); }
+
+/* === ЗАДАЧИ === */
 .taskgrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
-.task { padding: 20px; transition: all .2s; border-radius: 20px; position: relative; min-width: 0; }
-.task:hover { border-color: #fff; background: rgba(255,255,255,0.6); transform: translateY(-2px); box-shadow: 0 12px 30px rgba(100, 80, 60, 0.1); }
-.task h3 { margin: 12px 0 10px; line-height: 1.4; overflow-wrap: anywhere; }
+.task { padding: 20px; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s, border-color 0.3s; position: relative; min-width: 0; }
+.task:hover { transform: translateY(-5px); border-color: rgba(255,255,255,0.2); box-shadow: 0 16px 32px rgba(0,0,0,0.4); }
+.task h3 { margin: 12px 0 10px; line-height: 1.4; overflow-wrap: anywhere; font-weight: 600; }
 .taskmeta { font-size: 12px; color: var(--muted); font-weight: 500; }
-.taskfooter { border-top: 1px solid var(--line); padding-top: 14px; margin-top: 16px; }
-.task .assignee { font-size: 13px; font-weight: 600; }
-.progress { height: 6px; border-radius: 10px; background: rgba(0,0,0,0.05); overflow: hidden; }
+.taskfooter { border-top: 1px solid rgba(255,255,255,0.05); padding-top: 14px; margin-top: 16px; }
+.progress { height: 6px; border-radius: 10px; background: rgba(255,255,255,0.05); overflow: hidden; }
 .progress > span { display: block; height: 100%; background: var(--accent); border-radius: 10px; }
-.checkrow { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; margin: 8px 0; font-weight: 500; }
+.checkrow { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; margin: 8px 0; color: #d6d3d1; }
 .checkrow input { accent-color: var(--accent); margin-top: 4px; width: 16px; height: 16px; flex-shrink: 0; }
 .taskactions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
-.taskactions .btn { padding: 7px 12px; min-height: 36px; font-size: 13px; }
 
-/* Канбан доска */
+/* === КАНБАН === */
 .kanban { display: grid; grid-template-columns: repeat(4, minmax(280px, 1fr)); gap: 16px; overflow-x: auto; padding-bottom: 20px; align-items: start; }
-.column { padding: 14px; border-radius: 24px; background: rgba(255,255,255,0.2); border: 1px solid var(--line); }
+.column { padding: 14px; border-radius: 24px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.05); }
 .columnhead { padding: 4px 4px 16px; font-size: 14px; font-weight: 650; }
 
-/* Нижняя навигация */
-.bottomnav { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; padding: 8px; z-index: 30; background: rgba(255,255,255,0.7); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); border: 1px solid #fff; border-radius: 24px; box-shadow: 0 20px 60px rgba(0,0,0,0.15); }
-.bottomnav button { position: relative; display: flex; align-items: center; gap: 8px; background: transparent; color: var(--muted); border: 0; padding: 12px 20px; border-radius: 16px; font-size: 14px; font-weight: 600; white-space: nowrap; transition: all .2s; }
-.bottomnav button:hover { color: var(--text); background: rgba(255,255,255,0.5); }
-.bottomnav button.active { background: #fff; color: var(--accent); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+/* === НИЖНЯЯ НАВИГАЦИЯ === */
+.bottomnav { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; padding: 8px; z-index: 30; background: rgba(25, 20, 18, 0.75); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; box-shadow: 0 20px 60px rgba(0,0,0,0.6); }
+.bottomnav button { position: relative; display: flex; align-items: center; gap: 8px; background: transparent; color: var(--muted); border: 0; padding: 12px 20px; border-radius: 16px; font-size: 14px; font-weight: 600; transition: all .2s; }
+.bottomnav button:hover { color: #fff; background: rgba(255,255,255,0.05); }
+.bottomnav button.active { background: rgba(255,255,255,0.1); color: var(--accent); }
 .badge { background: var(--accent); color: #fff; font-size: 11px; min-width: 20px; height: 20px; border-radius: 10px; display: grid; place-items: center; font-weight: 700; }
 
-/* Формы */
+/* === ФОРМЫ И МОДАЛКИ === */
 .filters { display: flex; gap: 12px; flex-wrap: wrap; margin: 20px 0; }
-.field { display: flex; flex-direction: column; gap: 8px; font-size: 14px; min-width: 0; font-weight: 600; }
-.field label { color: var(--muted); }
-.input { width: 100%; padding: 12px 14px; min-height: 48px; color: var(--text); background: rgba(255,255,255,0.6); border: 1px solid var(--line); border-radius: 14px; transition: all .2s; font-weight: 500; }
-.input:focus { border-color: var(--accent); background: #fff; box-shadow: 0 0 0 4px rgba(234,88,12,0.1); }
-.input::placeholder { color: #a8a29e; }
+.field { display: flex; flex-direction: column; gap: 8px; font-size: 14px; min-width: 0; font-weight: 500; }
+.input { width: 100%; padding: 12px 14px; min-height: 48px; color: #fff; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; transition: all .2s; }
+.input:focus { border-color: var(--accent); background: rgba(0,0,0,0.5); }
+.input::placeholder { color: rgba(255,255,255,0.3); }
 textarea.input { min-height: 100px; resize: vertical; }
+
+.overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); display: flex; align-items: center; justify-content: center; padding: 16px; z-index: 100; }
+.modal { width: 100%; max-width: 600px; max-height: 90dvh; overflow-y: auto; padding: 32px; background: #1a1614; border: 1px solid rgba(255,255,255,0.1); border-radius: 28px; box-shadow: 0 40px 100px rgba(0,0,0,0.8); }
+.modalhead { margin-bottom: 24px; }
+.formgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.span2 { grid-column: 1 / -1; }
+.modalfoot { margin-top: 28px; display: flex; justify-content: flex-end; gap: 12px; }
 
 /* Графики и таблицы */
 .charts { display: grid; grid-template-columns: 1.35fr 1fr 1fr; gap: 16px; }
@@ -185,41 +222,36 @@ textarea.input { min-height: 100px; resize: vertical; }
 .chartcanvas { height: 220px; position: relative; margin-top: 20px; }
 .tablewrap { overflow: auto; border-radius: 20px; }
 table { border-collapse: collapse; width: 100%; text-align: left; font-size: 14px; }
-th { font-size: 13px; font-weight: 600; color: var(--muted); background: rgba(255,255,255,0.3); white-space: nowrap; }
-td, th { padding: 16px; border-bottom: 1px solid var(--line); }
+th { font-size: 13px; font-weight: 600; color: var(--muted); background: rgba(255,255,255,0.03); white-space: nowrap; }
+td, th { padding: 16px; border-bottom: 1px solid rgba(255,255,255,0.05); }
 
 /* Остальное */
-.empty { text-align: center; padding: 48px 20px; color: var(--muted); border: 2px dashed rgba(0,0,0,0.1); border-radius: 24px; font-weight: 500; }
+.empty { text-align: center; padding: 48px 20px; color: var(--muted); border: 2px dashed rgba(255,255,255,0.1); border-radius: 24px; font-weight: 500; }
 .goalgrid, .ideagrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
 .goal, .idea { padding: 24px; border-radius: 24px; }
-.overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.2); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); display: flex; align-items: center; justify-content: center; padding: 16px; z-index: 100; }
-.modal { width: 100%; max-width: 600px; max-height: 90dvh; overflow-y: auto; padding: 32px; background: #fdfaf6; border: 1px solid #fff; border-radius: 28px; box-shadow: 0 40px 100px rgba(0,0,0,0.2); }
-.modalhead { margin-bottom: 24px; }
-.formgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-.span2 { grid-column: 1 / -1; }
-.modalfoot { margin-top: 28px; display: flex; justify-content: flex-end; gap: 12px; }
-.toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 200; max-width: 90%; padding: 14px 24px; background: #fff; border: 1px solid var(--line); border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); font-size: 14px; font-weight: 600; color: var(--text); }
+.toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 200; max-width: 90%; padding: 14px 24px; background: #2a2420; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); font-size: 14px; font-weight: 600; color: #fff; }
 
-/* Экран логина */
-.login { max-width: 440px; margin: 8vh auto; padding: 40px; border-top: 4px solid var(--accent); background: rgba(255,255,255,0.7); }
-.login h1 { font-size: 28px; margin: 24px 0 10px; }
-.login .field { margin-top: 16px; }
-.login .primary { width: 100%; margin-top: 24px; }
+.login { max-width: 440px; margin: 8vh auto; padding: 40px; border-top: 4px solid var(--accent); background: rgba(255,255,255,0.03); }
 .error { color: var(--red); font-size: 14px; margin-top: 12px; font-weight: 500; }
 .note { white-space: pre-wrap; overflow-wrap: anywhere; }
-.sectiontitle { margin: 32px 0 16px; font-size: 20px; }
+.sectiontitle { margin: 32px 0 16px; font-size: 20px; font-weight: 700; }
 .notification, .warnbox { margin-top: 12px; padding: 12px 16px; font-size: 14px; font-weight: 500; border-radius: 12px; }
-.notification { background: rgba(245, 158, 11, 0.1); border-left: 3px solid #f59e0b; color: #b45309; }
-.warnbox { background: rgba(239, 68, 68, 0.1); border-left: 3px solid #ef4444; color: #b91c1c; }
-.counttitle { font-size: 13px; color: var(--muted); font-weight: 500; margin-left: 8px; }
+.notification { background: rgba(245, 158, 11, 0.1); border-left: 3px solid #f59e0b; color: #fbbf24; }
+.warnbox { background: rgba(239, 68, 68, 0.1); border-left: 3px solid #ef4444; color: #f87171; }
 
-/* Адаптивность */
-@media(max-width:1100px){.stats{grid-template-columns:repeat(3,minmax(0,1fr))}.taskgrid{grid-template-columns:repeat(2,minmax(0,1fr))}.charts{grid-template-columns:1fr 1fr}.chartbox:first-child{grid-column:1/-1}}
+@media(max-width:1100px){
+  .hero-dashboard { grid-template-columns: 1fr; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .taskgrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .charts{grid-template-columns:1fr 1fr}.chartbox:first-child{grid-column:1/-1}
+}
 @media(max-width:640px){
   .shell{padding:16px 12px 115px}.topbar{padding:12px 16px}.topbar .desktop{display:none}h1{font-size:24px}
-  .stats{gap:12px;grid-template-columns:repeat(2,minmax(0,1fr));margin:16px 0}.stat{padding:20px}.stat .value{font-size:28px}
+  .dashboard-glass-panel { padding: 20px; border-radius: 28px; }
+  .stats-grid { gap: 12px; }
+  .ring-card { padding: 16px; }
   .taskgrid,.goalgrid,.ideagrid,.charts{grid-template-columns:1fr}
-  .bottomnav{bottom:0;width:100%;border-radius:24px 24px 0 0;justify-content:space-around;padding:10px 4px calc(10px + env(safe-area-inset-bottom));gap:0; background: rgba(255,255,255,0.85); }
+  .bottomnav{bottom:0;width:100%;border-radius:24px 24px 0 0;justify-content:space-around;padding:10px 4px calc(10px + env(safe-area-inset-bottom));gap:0; }
   .bottomnav button{flex:1;flex-direction:column;gap:6px;padding:10px 4px;font-size:12px; border-radius:16px;}
   .brand-logo{width:40px;height:40px}.brand{font-size:17px}.brand small{font-size:9px}
   .kanban{grid-template-columns:repeat(4,280px)}
@@ -229,14 +261,14 @@ td, th { padding: 16px; border-bottom: 1px solid var(--line); }
 </head>
 <body>
 <div id="root">
-  <div style="padding:40px;color:#78716c">team Benoy Travel · Загрузка приложения…<noscript>Для работы приложения включите JavaScript.</noscript></div>
+  <div style="padding:40px;color:rgba(255,255,255,0.5)">team Benoy Travel · Загрузка приложения…<noscript>Для работы приложения включите JavaScript.</noscript></div>
 </div>
 
 <script>
 setTimeout(function(){
   if(!window.BENOY_READY){
     var el=document.getElementById('root');
-    if(el) el.innerHTML='<div style="padding:40px;color:#78716c">Не удалось загрузить приложение. Обновите страницу. Если ошибка повторится, проверьте консоль браузера (F12) или статус базы данных.</div>';
+    if(el) el.innerHTML='<div style="padding:40px;color:rgba(255,255,255,0.5)">Не удалось загрузить приложение. Обновите страницу. Если ошибка повторится, проверьте консоль браузера (F12) или статус базы данных.</div>';
   }
 },15000);
 </script>
@@ -435,7 +467,7 @@ function ChartPanel({title,type,labels,data,colors}){
   const ref=useRef();
   useEffect(()=>{
     if(!window.Chart)return;
-    const c=new Chart(ref.current,{type,data:{labels,datasets:[{label:title,data,borderColor:type==='line'?'#ea580c':colors,backgroundColor:type==='line'?'rgba(234,88,12,0.1)':colors,borderWidth:type==='line'?3:0,fill:type==='line',tension:.4,pointRadius:4,borderRadius:type==='bar'?8:0}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:type==='bar'?'y':'x',plugins:{legend:{display:type==='doughnut',position:'bottom',labels:{color:'#78716c',boxWidth:8,padding:14,font:{size:12}}}},...(type==='doughnut'?{cutout:'77%'}:{scales:{x:{grid:{display:false},ticks:{color:'#78716c',font:{size:11}}},y:{beginAtZero:true,grid:{color:'rgba(0,0,0,0.06)'},ticks:{color:'#78716c',precision:0,font:{size:11}}}}})}});
+    const c=new Chart(ref.current,{type,data:{labels,datasets:[{label:title,data,borderColor:type==='line'?'var(--accent)':colors,backgroundColor:type==='line'?'rgba(255,90,54,0.15)':colors,borderWidth:type==='line'?3:0,fill:type==='line',tension:.4,pointRadius:4,borderRadius:type==='bar'?8:0}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:type==='bar'?'y':'x',plugins:{legend:{display:type==='doughnut',position:'bottom',labels:{color:'rgba(255,255,255,0.7)',boxWidth:8,padding:14,font:{size:12}}}},...(type==='doughnut'?{cutout:'77%'}:{scales:{x:{grid:{display:false},ticks:{color:'rgba(255,255,255,0.5)',font:{size:11}}},y:{beginAtZero:true,grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'rgba(255,255,255,0.5)',precision:0,font:{size:11}}}}})}});
     return()=>c.destroy();
   },[JSON.stringify({labels,data,type})]);
   return <div className="glass chartbox"><h3>{title}</h3>{window.Chart?<div className="chartcanvas"><canvas ref={ref}/></div>:<p className="error">Графики доступны в реестре.</p>}</div>;
@@ -460,12 +492,12 @@ function SystemOverviewView({close}){
   if(err)return <div className="stack"><p className="error">{err}</p><p className="muted">Убедитесь, что проект Supabase активен (Unpause).</p></div>;
   return <div className="stack">
     <div className="row wrap between"><span className="chip emerald"><span className="pilldot"/>База данных: {data.status||'online'}</span><span className="muted mini">Задержка сети: {data.ping} мс</span></div>
-    <div className="stats" style={{gridTemplateColumns:'repeat(3,1fr)',margin:'10px 0'}}>
-      <div className="stat"><div className="label">Размер БД</div><div className="value" style={{fontSize:24}}>{data.database_bytes?Math.round(data.database_bytes/1024)+' КБ':'—'}</div><small>PostgreSQL</small></div>
-      <div className="stat"><div className="label">Профили</div><div className="value" style={{fontSize:24}}>{data.active_profiles||0}</div><small>активных</small></div>
-      <div className="stat"><div className="label">Auth-аккаунты</div><div className="value" style={{fontSize:24}}>{data.auth_accounts||0}</div><small>связано: {data.linked_active_profiles||0}</small></div>
+    <div className="stats-grid" style={{gridTemplateColumns:'repeat(3,1fr)',margin:'10px 0'}}>
+      <div className="ring-card" style={{alignItems:'flex-start', padding:20}}><div className="muted" style={{fontSize:13}}>Размер БД</div><div style={{fontSize:24, fontWeight:700, margin:'4px 0'}}>{data.database_bytes?Math.round(data.database_bytes/1024)+' КБ':'—'}</div></div>
+      <div className="ring-card" style={{alignItems:'flex-start', padding:20}}><div className="muted" style={{fontSize:13}}>Профили</div><div style={{fontSize:24, fontWeight:700, margin:'4px 0'}}>{data.active_profiles||0}</div></div>
+      <div className="ring-card" style={{alignItems:'flex-start', padding:20}}><div className="muted" style={{fontSize:13}}>Auth-аккаунты</div><div style={{fontSize:24, fontWeight:700, margin:'4px 0'}}>{data.auth_accounts||0}</div></div>
     </div>
-    <div className="glass" style={{padding:20}}>
+    <div className="glass" style={{padding:24}}>
       <h3 style={{marginBottom:14}}>Состояние таблиц</h3>
       <table style={{fontSize:13}}>
         <thead><tr><th>Таблица</th><th>Строк</th><th>Объём</th></tr></thead>
@@ -500,8 +532,8 @@ function App(){
   useEffect(()=>{
     window.BENOY_READY=true;
     const tg=window.Telegram?.WebApp;
-    try{tg?.ready();tg?.expand();tg?.setHeaderColor?.('#e6ded5');tg?.setBackgroundColor?.('#e6ded5');}catch{}
-    const f=e=>{if(e.target.closest('button,a,.task,input[type=checkbox],.stat'))try{tg?.HapticFeedback?.impactOccurred('light')}catch{}};
+    try{tg?.ready();tg?.expand();tg?.setHeaderColor?.('#0d0a09');tg?.setBackgroundColor?.('#0d0a09');}catch{}
+    const f=e=>{if(e.target.closest('button,a,.task,input[type=checkbox],.ring-card,.toggle-switch'))try{tg?.HapticFeedback?.impactOccurred('light')}catch{}};
     document.addEventListener('click',f);
     return()=>document.removeEventListener('click',f);
   },[]);
@@ -528,17 +560,17 @@ function App(){
   function taskCard(t){
     const u=db.users.find(u=>u.name===t.assignee),urgent=urgency(t),checks=t.checklist||[],done=checks.filter(c=>c.done).length,canEdit=manager||(t.assignee===user?.name&&t.status!=='Выполнена');
     return <article className="glass task" key={t.id}>
-      <div className="between"><span className="taskmeta">{t.task_id||'#'+t.id} <span style={{marginLeft:8,color:'#9a3412'}}>{t.category||'Уточнить направление'}</span></span><span className={'chip '+(t.priority==='Высокий'?'coral':'')}>{t.priority==='Высокий'?'↑ Высокий':t.priority}</span></div>
+      <div className="between"><span className="taskmeta">{t.task_id||'#'+t.id} <span style={{marginLeft:8,color:var(--accent)}}>{t.category||'Уточнить направление'}</span></span><span className={'chip '+(t.priority==='Высокий'?'coral':'')}>{t.priority==='Высокий'?'↑ Высокий':t.priority}</span></div>
       <h3>{t.text}</h3>
       {t.needs_object_clarification&&<div className="warnbox">⚠️ Задача требует ручного уточнения объекта (базы/отеля). Выбор объекта выполняет только владелец.</div>}
-      <div className="row wrap" style={{marginTop:8}}><span className={'chip '+statusColor(t.status)}><span className="pilldot"/>{t.status}</span>{urgent&&<span className={'chip '+urgent}>{urgent[0]}</span>}</div>
+      <div className="row wrap" style={{marginTop:12}}><span className={'chip '+statusColor(t.status)}><span className="pilldot"/>{t.status}</span>{urgent&&<span className={'chip '+urgent}>{urgent[0]}</span>}</div>
       {t.rejection_reason&&t.status==='В работе'&&<div className="notification">На доработку: {t.rejection_reason}</div>}
-      {checks.length>0&&<div style={{marginTop:20}}><div className="between mini muted" style={{marginBottom:8}}><span className="row"><Icon name="list-checks" size={14}/>Чек-лист</span><span>{done}/{checks.length}</span></div><div className="progress"><span style={{width:100*done/checks.length+'%'}}/></div><details style={{marginTop:12}}><summary>Показать пункты</summary>{checks.map((c,i)=><label key={c.id||i} className="checkrow"><input type="checkbox" checked={!!c.done} disabled={!canEdit} onChange={()=>updateTask(t,{checklist:checks.map((x,j)=>i===j?{...x,done:!x.done}:x)})}/><span style={{textDecoration:c.done?'line-through':'none'}}>{c.text}</span></label>)}</details></div>}
+      {checks.length>0&&<div style={{marginTop:24}}><div className="between mini muted" style={{marginBottom:8}}><span className="row"><Icon name="list-checks" size={14}/>Чек-лист</span><span>{done}/{checks.length}</span></div><div className="progress"><span style={{width:100*done/checks.length+'%'}}/></div><details style={{marginTop:12}}><summary className="muted" style={{cursor:'pointer', fontSize:13}}>Показать пункты</summary>{checks.map((c,i)=><label key={c.id||i} className="checkrow"><input type="checkbox" checked={!!c.done} disabled={!canEdit} onChange={()=>updateTask(t,{checklist:checks.map((x,j)=>i===j?{...x,done:!x.done}:x)})}/><span style={{textDecoration:c.done?'line-through':'none'}}>{c.text}</span></label>)}</details></div>}
       <div className="between taskfooter"><div className="row"><span className="avatar">{initials(t.assignee)}</span><span className="assignee">{t.assignee}</span></div><span className="row taskmeta"><Icon name="calendar-days" size={14}/>{fmt(t.deadline)}</span></div>
       <div className="taskactions">
         {safeLink(t.attachments)&&<a className="btn" href={safeLink(t.attachments)} target="_blank" rel="noopener noreferrer"><Icon name="paperclip" size={14}/>Материалы</a>}
         {u?.telegram?<a className="btn" href={'https://t.me/'+u.telegram.replace('@','')} target="_blank" rel="noopener noreferrer"><Icon name="send" size={14}/>Telegram</a>:<Btn icon="send" onClick={()=>notify('Telegram исполнителя ещё не указан в профиле')}>Связаться</Btn>}
-        {manager&&<Btn icon="pencil" onClick={()=>Q({type:'task',task:t})}>Редактировать</Btn>}
+        {manager&&<Btn icon="pencil" onClick={()=>Q({type:'task',task:t})}>Изменить</Btn>}
         {canEdit&&t.status==='К выполнению'&&<Btn onClick={()=>updateTask(t,{status:'В работе'})}>В работу</Btn>}
         {canEdit&&t.status==='В работе'&&<Btn onClick={()=>updateTask(t,{status:'На проверке'})}>На проверку</Btn>}
         {manager&&t.status==='На проверке'&&<><Btn kind="primary" icon="check" onClick={()=>updateTask(t,{status:'Выполнена',completed_at:iso(),rejection_reason:'',history:[...(t.history||[]),audit(user,'Результат принят')]})}>Принять</Btn><Btn onClick={()=>Q({type:'reject',task:t})}>На доработку</Btn></>}
@@ -547,33 +579,89 @@ function App(){
     </article>;
   }
 
-  // ОБНОВЛЕННАЯ ФУНКЦИЯ КАРТОЧЕК СТАТИСТИКИ V2
-  const stats=(list)=>{
-    let n=list.length;
-    let done=list.filter(t=>t.status==='Выполнена').length;
-    let review=list.filter(t=>t.status==='На проверке').length;
-    let late=list.filter(overdue).length;
-    let active=list.filter(t=>!overdue(t)&&['К выполнению','В работе'].includes(t.status)).length;
-    return [
-      {key:'all',label:'Всего задач',value:n,sub:'В периоде',icon:'layers',color:'#78716c'},
-      {key:'active',label:'В работе',value:active,sub:'По графику',icon:'activity',color:'#ea580c'},
-      {key:'review',label:'На утверждении',value:review,sub:'Ждут приёмки',icon:'clock',color:'#8b5cf6'},
-      {key:'late',label:'Просрочено',value:late,sub:'Требуют внимания',icon:'triangle-alert',color:'#ef4444'},
-      {key:'done',label:'Выполнено',value:done,sub:(n?Math.round(done/n*100):0)+'%',icon:'circle-check',color:'#10b981'}
-    ];
-  };
+  // === НОВЫЙ ДАШБОРД (DashboardHero) 1 В 1 ПО РЕФЕРЕНСУ ===
+  const DashboardHero = () => {
+    const total = base.length || 1;
+    const active = base.filter(t => !overdue(t) && ['К выполнению','В работе'].includes(t.status)).length;
+    const review = base.filter(t => t.status === 'На проверке').length;
+    const late = base.filter(overdue).length;
+    const done = base.filter(t => t.status === 'Выполнена').length;
 
-  const kpis=list=><div className="stats">{stats(list).map(s=><button className={'stat '+(filter===s.key?'selected':'')} key={s.key} onClick={()=>Filter(s.key)}>
-    <div className="top-row">
-      <span className="label">{s.label}</span>
-      <span className="icon-box" style={{color:s.color}}><Icon name={s.icon} size={20}/></span>
-    </div>
-    <div className="value" style={{color:s.key==='late'&&s.value?'#ef4444':s.key==='review'&&s.value?'#8b5cf6':undefined}}>{s.value.toString().padStart(2,'0')}</div>
-    <div className="trend" style={{color:s.key==='late'?'#ef4444':s.key==='done'?'#10b981':'#ea580c'}}>
-      <Icon name={s.key==='late'?'arrow-down-right':s.key==='done'?'arrow-up-right':'activity'} size={16}/>
-      <span>{s.sub}</span>
-    </div>
-  </button>)}</div>;
+    const cards = [
+      { key: 'active', label: 'В работе', val: active, color: '#38bdf8' },
+      { key: 'review', label: 'На проверке', val: review, color: '#c084fc' },
+      { key: 'late', label: 'Просрочено', val: late, color: '#ef4444' },
+      { key: 'done', label: 'Выполнено', val: done, color: '#10b981' }
+    ];
+
+    // Имитация данных для центрального графика, чтобы он выглядел живо как на картинке
+    const dummyChartHeights = [30, 45, 60, 20, 100, 40, 80];
+
+    return (
+      <div className="dashboard-glass-panel">
+        <div className="between" style={{marginBottom: 20}}>
+          <div>
+            <h2 style={{fontSize: 26, fontWeight: 700, margin: '0 0 4px'}}>Задачи и Цели</h2>
+            <p className="muted">Статистика в текущем пространстве</p>
+          </div>
+          {manager&&<Btn kind="primary" icon="plus" onClick={()=>Q({type:'task'})}><span className="desktop">Создать </span>задачу</Btn>}
+        </div>
+        
+        <div className="hero-dashboard">
+          <div className="hero-left">
+            <p className="muted" style={{fontSize: 13, textTransform: 'uppercase', letterSpacing: 1}}>Всего задач</p>
+            <div className="big-number">{base.length}</div>
+            <div className="chip" style={{color: '#10b981', background: 'rgba(16,185,129,0.1)', border:0, marginTop: 8}}>Выполнено {Math.round((done/total)*100)}%</div>
+          </div>
+          
+          <div className="hero-mid">
+            {dummyChartHeights.map((h, i) => (
+              <div key={i} className={`bar-fake ${i === 4 ? 'active' : ''}`} style={{height: `${h}%`}} />
+            ))}
+          </div>
+
+          <div className="hero-right stack" style={{gap: 16}}>
+            <p className="muted" style={{fontSize: 13, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 0}}>Панель управления</p>
+            {manager && (
+              <div className="between">
+                <span style={{fontSize: 14, fontWeight: 500}}>Мои задачи</span>
+                <div className={`toggle-switch ${scope==='mine'?'on':''}`} onClick={()=>S(scope==='mine'?'all':'mine')}><div className="thumb"/></div>
+              </div>
+            )}
+            <div className="between">
+              <span style={{fontSize: 14, fontWeight: 500}}>Режим Канбан</span>
+              <div className={`toggle-switch ${mode==='kanban'?'on':''}`} onClick={()=>M(mode==='kanban'?'list':'kanban')}><div className="thumb"/></div>
+            </div>
+          </div>
+        </div>
+
+        <div className="stats-grid">
+          <div className={`ring-card ${filter==='all'?'selected':''}`} onClick={()=>Filter('all')}>
+            <div className="ring-wrapper" style={{'--p': '100%', '--c': '#4b5563'}}>
+              <div className="ring-inner" style={{color: '#fff'}}><Icon name="layers" size={24}/></div>
+            </div>
+            <div className="title">Все задачи</div>
+            <div className="sub">{base.length} всего</div>
+            <button className="add-btn">Показать все</button>
+          </div>
+
+          {cards.map(c => {
+            const pct = Math.round((c.val / total) * 100);
+            return (
+              <div className={`ring-card ${filter===c.key?'selected':''}`} key={c.key} onClick={()=>Filter(c.key)}>
+                <div className="ring-wrapper" style={{'--p': `${pct}%`, '--c': c.color}}>
+                  <div className="ring-inner">{pct}%</div>
+                </div>
+                <div className="title">{c.label}</div>
+                <div className="sub">{c.val} задач</div>
+                <button className="add-btn">+ Фильтр</button>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+    );
+  };
 
   const reportBase=selectReportTasks(allowedTasks,{year,month,category:cat,status:reportStatus});
   const reportList=reportBase.filter(t=>{
@@ -608,10 +696,10 @@ function App(){
         <div className="row">
           <span className="avatar">{initials(user.name)}</span>
           <span className="desktop stack" style={{gap:2, textAlign:'left'}}>
-            <span style={{fontSize:14, fontWeight:600}}>{user.name}</span>
+            <span style={{fontSize:14, fontWeight:600, color:'#fff'}}>{user.name}</span>
             <span className="muted" style={{fontSize:11, fontWeight:500}}>{admin?'SuperAdmin':manager?'Руководство':'Сотрудник'}</span>
           </span>
-          <Icon name="chevron-down" size={16}/>
+          <span style={{color: '#fff'}}><Icon name="chevron-down" size={16}/></span>
         </div>
       </button>
     </header>
@@ -620,19 +708,12 @@ function App(){
       <div className="demo"><span>{busy?'Синхронизация…':'База Supabase подключена'}</span><button disabled={busy} onClick={()=>refresh().catch(()=>{})}>Обновить данные</button></div>
       {loadError&&<div className="notification" role="alert">{loadError}</div>}
 
-      {/* Вкладка 1: Задачи */}
+      {/* Вкладка 1: Задачи (НОВЫЙ ВИД ИЗ РЕФЕРЕНСА) */}
       {tab==='tasks'&&<>
-        <div className="between pagehead">
-          <div><p className="eyebrow">Рабочее пространство</p><h1>{manager?'Задачи команды':'Мои задачи'}</h1><p className="subtitle">От идеи до результата — всё под контролем.</p></div>
-          {manager&&<Btn kind="primary" icon="plus" onClick={()=>Q({type:'task'})}><span className="desktop">Назначить </span>задачу</Btn>}
-        </div>
-        {kpis(base)}
-        <div className="toolbar">
-          {manager?<div className="segment"><button className={scope==='all'?'active':''} onClick={()=>S('all')}>Все задачи</button><button className={scope==='mine'?'active':''} onClick={()=>S('mine')}>Мои поручения</button></div>:<span/>}
-          <div className="segment"><button className={mode==='list'?'active':''} onClick={()=>M('list')}><Icon name="list" size={16}/>Список</button><button className={mode==='kanban'?'active':''} onClick={()=>M('kanban')}><Icon name="columns-3" size={16}/>Канбан</button></div>
-        </div>
-        <div className="between wrap" style={{marginBottom:20}}>
-          <h3>{filter==='review'?'Задачи на утверждении':filter==='late'?'Просроченные задачи':filter==='done'?'Выполненные задачи':filter==='active'?'Задачи в работе':'Реестр задач'}<span className="counttitle">{filtered.length} из {base.length}</span></h3>
+        <DashboardHero />
+        
+        <div className="between wrap" style={{marginBottom:24}}>
+          <h3>{filter==='review'?'Задачи на утверждении':filter==='late'?'Просроченные задачи':filter==='done'?'Выполненные задачи':filter==='active'?'Задачи в работе':'Реестр задач'}<span className="muted" style={{fontSize:14, marginLeft:10, fontWeight:normal}}>{filtered.length} шт.</span></h3>
           <select aria-label="Направление" className="input" style={{width:'auto',maxWidth:'100%',fontSize:13, minHeight:38, padding:'8px 12px'}} value={cat} onChange={e=>Cat(e.target.value)}>
             <option value="">Все направления</option>
             {CATS.map(c=><option key={c}>{c}</option>)}
@@ -643,28 +724,31 @@ function App(){
 
       {/* Вкладка 2: Отчёты */}
       {tab==='reports'&&manager&&<>
-        <div className="between pagehead">
-          <div><p className="eyebrow">Данные и результаты</p><h1>Отчёты и аналитика</h1><p className="subtitle">Период реестра — по дате создания задачи. Динамика закрытия — по дате завершения.</p></div>
-          <Btn icon="download" onClick={exportCSV}>CSV / Excel</Btn>
+        <div className="dashboard-glass-panel">
+          <div className="between pagehead">
+            <div><h1 style={{marginBottom: 8}}>Отчёты и аналитика</h1><p className="muted">Динамика закрытия — по дате завершения.</p></div>
+            <Btn icon="download" onClick={exportCSV}>CSV / Excel</Btn>
+          </div>
+          <div className="filters">
+            <Select value={year} onChange={Y} options={[{value:'all',label:'Все годы'},...Array.from(new Set([...Array.from({length:5},(_,i)=>new Date().getFullYear()+i),...db.tasks.map(t=>new Date(t.created_at).getFullYear()).filter(Number.isFinite)])).sort().map(y=>({value:String(y),label:String(y)}))]}/>
+            <Select value={month} onChange={Mo} options={[{value:'all',label:'Все месяцы'},...MONTHS.map((m,i)=>({value:String(i),label:m}))]}/>
+            <Select value={cat} onChange={Cat} options={[{value:'',label:'Все направления'},...CATS]}/>
+            <Select value={reportStatus} onChange={RS} options={[{value:'',label:'Все статусы'},...STATES]}/>
+            <Btn onClick={()=>{Y('all');Mo('all');RS('');Cat('');Filter('all')}}>Сбросить фильтры</Btn>
+          </div>
+          <p className="muted" style={{marginBottom:32}}>Отображено: <strong>{reportList.length}</strong> из <strong>{allowedTasks.length}</strong> общих задач компании.</p>
+          
+          <div className="charts">
+            <ChartPanel title="Динамика закрытия" type="line" labels={MONTHS.map(m=>m.slice(0,3))} data={MONTHS.map((_,m)=>reportBase.filter(t=>t.status==='Выполнена'&&t.completed_at&&new Date(t.completed_at).getMonth()===m).length)}/>
+            <ChartPanel title="Нагрузка по направлениям" type="bar" labels={CATS} data={CATS.map(c=>reportBase.filter(t=>t.category===c).length)} colors="var(--accent)"/>
+            <ChartPanel title="Структура статусов" type="doughnut" labels={STATES} data={STATES.map(s=>reportBase.filter(t=>t.status===s).length)} colors={['#78716c','#0ea5e9','#8b5cf6','#10b981']}/>
+          </div>
         </div>
-        <div className="filters">
-          <Select value={year} onChange={Y} options={[{value:'all',label:'Все годы'},...Array.from(new Set([...Array.from({length:5},(_,i)=>new Date().getFullYear()+i),...db.tasks.map(t=>new Date(t.created_at).getFullYear()).filter(Number.isFinite)])).sort().map(y=>({value:String(y),label:String(y)}))]}/>
-          <Select value={month} onChange={Mo} options={[{value:'all',label:'Все месяцы'},...MONTHS.map((m,i)=>({value:String(i),label:m}))]}/>
-          <Select value={cat} onChange={Cat} options={[{value:'',label:'Все направления'},...CATS]}/>
-          <Select value={reportStatus} onChange={RS} options={[{value:'',label:'Все статусы'},...STATES]}/>
-          <Btn onClick={()=>{Y('all');Mo('all');RS('');Cat('');Filter('all')}}>Сбросить фильтры</Btn>
-        </div>
-        <p className="subtitle" style={{marginBottom:16}}>Отображено: <strong>{reportList.length}</strong> из <strong>{allowedTasks.length}</strong> общих задач компании.</p>
-        {kpis(reportBase)}
-        <div className="charts">
-          <ChartPanel title="Динамика закрытия" type="line" labels={MONTHS.map(m=>m.slice(0,3))} data={MONTHS.map((_,m)=>reportBase.filter(t=>t.status==='Выполнена'&&t.completed_at&&new Date(t.completed_at).getMonth()===m).length)}/>
-          <ChartPanel title="Нагрузка по направлениям" type="bar" labels={CATS} data={CATS.map(c=>reportBase.filter(t=>t.category===c).length)} colors="#ea580c"/>
-          <ChartPanel title="Структура статусов" type="doughnut" labels={STATES} data={STATES.map(s=>reportBase.filter(t=>t.status===s).length)} colors={['#78716c','#0ea5e9','#8b5cf6','#10b981']}/>
-        </div>
-        <h2 className="sectiontitle">Реестр задач <span className="counttitle">{reportList.length}</span></h2>
+        
+        <h2 className="sectiontitle">Реестр задач</h2>
         {reportList.length?<div className="taskgrid">{reportList.map(taskCard)}</div>:<Empty>Нет задач для выбранного фильтра</Empty>}
 
-        <h2 className="sectiontitle" style={{marginTop:48}}>Рейтинг команды <span className="counttitle">{assignees(db.users).length} исполнителей</span></h2>
+        <h2 className="sectiontitle" style={{marginTop:48}}>Рейтинг команды</h2>
         <div className="glass tablewrap">
           <table>
             <thead><tr><th>Участник</th><th>Всего</th><th>Выполнено</th><th>Просрочено</th><th>KPI</th></tr></thead>
@@ -681,15 +765,15 @@ function App(){
       {/* Вкладка 3: Сезонные цели */}
       {tab==='goals'&&<>
         <div className="between pagehead">
-          <div><p className="eyebrow">Большие планы</p><h1>Сезонные цели</h1><p className="subtitle">Общий вектор и персональный вклад.</p></div>
+          <div><h1 style={{marginBottom: 8}}>Сезонные цели</h1><p className="muted">Общий вектор и персональный вклад.</p></div>
           {manager&&<Btn kind="primary" icon="plus" onClick={()=>Q({type:'goal'})}>Добавить цель</Btn>}
         </div>
         <div className="goalgrid">
           {db.goals.filter(g=>manager||g.target_type==='all'||g.assignee_name===user.name).map(g=><article key={g.id} className="glass goal">
             <div className="between"><span className={'chip '+(g.target_type==='all'?'emerald':'sapphire')}><Icon name={g.target_type==='all'?'users':'user'} size={14}/>{g.target_type==='all'?'Общая цель':g.assignee_name}</span><Icon name="target" size={22}/></div>
-            <h3>{g.title}</h3><p className="muted" style={{fontSize:14}}>{g.description}</p>
+            <h3 style={{margin: '16px 0 8px'}}>{g.title}</h3><p className="muted" style={{fontSize:14}}>{g.description}</p>
             <div className="between" style={{marginTop:24}}><span className="muted" style={{fontSize:13, fontWeight:600}}>Прогресс</span><span style={{color:'var(--accent)',fontSize:26, fontWeight:800}}>{g.progress}%</span></div>
-            <div className="progress"><span style={{width:g.progress+'%'}}/></div>
+            <div className="progress" style={{margin:'8px 0'}}><span style={{width:g.progress+'%'}}/></div>
             <div className="between" style={{marginTop:12}}><span className="muted mini">Срок: {fmt(g.deadline)}</span>{Number(g.progress)===100&&<span className="chip emerald">Достигнута</span>}</div>
             {manager&&<div className="taskactions"><Btn icon="sliders-horizontal" onClick={()=>Q({type:'goal',goal:g})}>Изменить</Btn><Btn kind="danger" icon="trash-2" onClick={()=>Q({type:'deleteGoal',goal:g})}/></div>}
           </article>)}
@@ -699,16 +783,16 @@ function App(){
       {/* Вкладка 4: Идеи и Заметки */}
       {tab==='ideas'&&<div className="stack">
         <div className="between pagehead">
-          <div><p className="eyebrow">Инициативы</p><h1>Идеи и заметки</h1><p className="subtitle">Сохраняйте идеи для развития и личные заметки.</p></div>
+          <div><h1 style={{marginBottom: 8}}>Идеи и заметки</h1><p className="muted">Сохраняйте идеи для развития и личные заметки.</p></div>
           <Btn kind="primary" icon="plus" onClick={()=>Q({type:ideaTab==='ideas'?'idea':'note'})}>{ideaTab==='ideas'?'Предложить идею':'Новая заметка'}</Btn>
         </div>
-        <div className="segment">
-          <button className={ideaTab==='ideas'?'active':''} onClick={()=>IT('ideas')}><Icon name="lightbulb" size={16}/>Банк идей <span className="badge">{pending}</span></button>
-          <button className={ideaTab==='notes'?'active':''} onClick={()=>IT('notes')}><Icon name="notebook-pen" size={16}/>Личный блокнот</button>
+        <div className="row" style={{marginBottom: 16}}>
+          <Btn kind={ideaTab==='ideas'?'primary':''} onClick={()=>IT('ideas')} icon="lightbulb">Банк идей {pending>0&&<span className="badge">{pending}</span>}</Btn>
+          <Btn kind={ideaTab==='notes'?'primary':''} onClick={()=>IT('notes')} icon="notebook-pen">Личный блокнот</Btn>
         </div>
         {ideaTab==='ideas'?<div className="ideagrid">{db.ideas.map(i=><article className="glass idea" key={i.id}>
           <div className="between"><span className={'chip '+(i.status==='На рассмотрении'?'amber':i.status==='Принята'?'emerald':'')}>{i.status}</span><small className="muted">{fmt(i.created_at)}</small></div>
-          <h3>{i.title}</h3><p style={{color:'var(--muted)', fontSize:14}}>{i.text}</p>
+          <h3 style={{margin: '16px 0 8px'}}>{i.title}</h3><p style={{color:'var(--muted)', fontSize:14}}>{i.text}</p>
           <div className="between taskfooter"><span className="row muted" style={{fontSize:13}}><span className="avatar">{initials(i.author)}</span><span style={{fontWeight:600}}>{i.author}</span></span><Btn icon="thumbs-up" kind={(i.likes||[]).includes(user.login)?'emerald':''} onClick={()=>commit(d=>({...d,ideas:d.ideas.map(x=>x.id===i.id?{...x,likes:(x.likes||[]).includes(user.login)?x.likes.filter(l=>l!==user.login):[...(x.likes||[]),user.login]}:x)}))}>{i.likes_count??(i.likes||[]).length}</Btn></div>
           {manager&&<div className="taskactions"><Btn icon="arrow-up-right" onClick={()=>Q({type:'task',idea:i})}>В задачу</Btn><select className="input" style={{width:'auto',fontSize:13, minHeight:36, padding:'6px 12px'}} value={i.status} onChange={e=>commit(d=>({...d,ideas:d.ideas.map(x=>x.id===i.id?{...x,status:e.target.value}:x)}))}>{['На рассмотрении','Принята','Неактуальна'].map(x=><option key={x}>{x}</option>)}</select><Btn kind="danger" icon="trash-2" onClick={()=>Q({type:'deleteIdea',idea:i})}/></div>}
         </article>)}</div>:<div className="ideagrid">{db.notes.filter(n=>n.user_login===user.login).map(n=><article className="glass idea" key={n.id}><p className="note">{n.text}</p><div className="between taskfooter"><small className="muted">{fmt(n.updated_at)}</small><div className="row"><Btn icon="pencil" onClick={()=>Q({type:'note',note:n})}/><Btn kind="danger" icon="trash-2" onClick={()=>Q({type:'deleteNote',note:n})}/></div></div></article>)}</div>}
@@ -717,7 +801,7 @@ function App(){
       {/* Вкладка 5: Управление командой (для lobo / SuperAdmin) */}
       {tab==='team'&&admin&&<>
         <div className="between pagehead">
-          <div><p className="eyebrow">Администрирование</p><h1>Управление командой</h1><p className="subtitle">Профили сотрудников, привязка Auth UID и быстрая смена паролей.</p></div>
+          <div><h1 style={{marginBottom: 8}}>Управление командой</h1><p className="muted">Профили сотрудников, привязка Auth UID и пароли.</p></div>
           <Btn kind="primary" icon="user-plus" onClick={()=>Q({type:'person'})}>Добавить</Btn>
         </div>
         <div className="glass tablewrap">
@@ -741,7 +825,7 @@ function App(){
         </div>
       </>}
 
-      <p className="muted" style={{textAlign:'center', marginTop: 40, fontSize:13}}>team Benoy Travel · Корпоративная система команды Кавказа</p>
+      <p className="muted" style={{textAlign:'center', marginTop: 60, fontSize:13}}>team Benoy Travel · Корпоративная система команды Кавказа</p>
     </main>
 
     {/* Нижняя панель навигации */}
@@ -839,7 +923,7 @@ function IdeaForm({save,close}){
 function Connection(){
   return <div className="stack">
     <p style={{fontSize:14, fontWeight:500}}>Система работает напрямую с базой данных Supabase (PostgreSQL).</p>
-    <p className="connection">Если данные не загружаются, убедитесь, что проект в панели Supabase переведён в статус Active (нажата кнопка Unpause).</p>
+    <p className="muted">Если данные не загружаются, убедитесь, что проект в панели Supabase переведён в статус Active (нажата кнопка Unpause).</p>
   </div>;
 }
 
@@ -878,7 +962,7 @@ function Login({onLogin,connection,errorMessage}){
     }
   }
 
-  return <main className="glass login">
+  return <main className="glass login" style={{borderRadius: 32}}>
     <div className="row" style={{marginBottom:10}}>
       <img className="brand-logo" src="./assets/benoy-travel-logo.png" width="56" height="56" alt="team Benoy Travel"/>
       <div className="brand">team Benoy Travel<small>КОРПОРАТИВНАЯ СИСТЕМА</small></div>
@@ -896,7 +980,7 @@ function Login({onLogin,connection,errorMessage}){
       {(error||errorMessage)&&<p className="error" role="alert">{error||errorMessage}</p>}
       <button disabled={busy} className="btn primary" style={{width:'100%',marginTop:24}}>{busy?'Проверяем…':'Войти'}</button>
     </form>
-    <button className="btn" style={{marginTop:16,width:'100%', background:'transparent'}} onClick={connection}>Статус подключения</button>
+    <button className="btn" style={{marginTop:16,width:'100%', background:'transparent', border:0}} onClick={connection}>Статус подключения</button>
   </main>;
 }
 
